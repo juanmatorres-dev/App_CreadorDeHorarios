@@ -1,0 +1,4 @@
+[Calendario - Opciones]
+
+Mostrar segundos en el reloj = true
+Mostrar notificación al cambiar de asignatura = true
