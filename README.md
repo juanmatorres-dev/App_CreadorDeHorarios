@@ -6,3 +6,4 @@ Más información en la web oficial: [https://practicasbyjmtm1.firebaseapp.com/p
 
 Funciona con una base de datos MySQL :
 
+![Imagen del esquema de la base de datos](https://raw.githubusercontent.com/juanmatorres-dev/App_CreadorDeHorarios/master/esquema.png)
