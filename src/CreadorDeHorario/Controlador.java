@@ -89,6 +89,9 @@ import org.w3c.dom.events.MouseEvent;
 public class Controlador implements MouseListener , WindowListener , KeyListener , TableModelListener  {
 	
 	private String urlDelServidor_incompleta = "//localhost:3306/"; // Cambia esto si tu servidor es otro 
+	private String user = "root";
+	private String pass = "root";
+	private String BD = "creadorDe_horarios_dataBase";
 	
 	private boolean laConexionHaFallado = false;
 
@@ -1319,14 +1322,14 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	 * SQL Operations
 	 */
 	public void iniciar_Conexion_Con_Servidor() {
-		MySQLConnection("root", "root", "creadorDe_horarios_dataBase");
+		MySQLConnection(user, pass, BD);
 	}
 	
 	/*
 	 * 
 	 */
 	private void iniciar_Conexion_Con_Servidor_Si_La_BD_No_Existe() {
-		MySQLConnection("root", "root", "");
+		MySQLConnection(user, pass, "");
 	}
 	
 	
@@ -1763,7 +1766,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	 */
 	private void seleccionarLaBaseDeDatos() {
 		try {
-			String Query = "USE creadorDe_horarios_dataBase;";
+			String Query = "USE " + BD + ";";
 			Statement st = conexion.createStatement();
 			st.executeUpdate(Query);
 			
