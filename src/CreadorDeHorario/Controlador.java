@@ -6,6 +6,7 @@ package CreadorDeHorario;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
@@ -25,13 +26,23 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.event.WindowStateListener;
 import java.awt.print.PrinterException;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.management.ManagementFactory;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -87,11 +98,18 @@ import org.w3c.dom.events.MouseEvent;
  *
  */
 public class Controlador implements MouseListener , WindowListener , KeyListener , TableModelListener  {
+	/**
+	 * Contiene la información de la conexión de la base de datos
+	 */
+	DB dataBaseInfo = new DB();
 	
-	private String urlDelServidor_incompleta = "//localhost:3306/"; // Cambia esto si tu servidor es otro 
-	private String user = "root";
-	private String pass = "root";
-	private String BD = "creadorDe_horarios_dataBase";
+	private String urlDelServidor_incompleta = dataBaseInfo.urlDelServidor_incompleta;
+	private String user = dataBaseInfo.user; 
+	private String pass = dataBaseInfo.pass;
+	private String BD = dataBaseInfo.BD;
+	
+	
+	private String downloadedFileName;
 	
 	private boolean laConexionHaFallado = false;
 
@@ -100,6 +118,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	private Configuracion configuracion;
 	private BorrarFila borrarFila;
 	private MySQL_Operations sql;
+	private Update update;
 	
 	private int mesActual; // Guardan el mes y año actuales al abrir el Calendario
 	private int anioActual;
@@ -167,6 +186,10 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	Runnable esperarALimpiarDelTodoLaTabla = () -> limpiarDelTodoLaTabla();
 	Runnable moverDatos = () -> moverDatos();
 	
+	ScheduledExecutorService serviceUpdate = Executors.newSingleThreadScheduledExecutor();
+	Runnable esperarAntesDeActualizar = () -> prepararReinicioTrasActualizar();
+	
+	
 	private ArrayList<String> primarasHorasDeCadaIntervaloHorario_enTexto = new ArrayList<String>();
 	private ArrayList<String> primerosMinutosDeCadaIntervaloHorario_enTexto = new ArrayList<String>();
 	
@@ -189,7 +212,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	private boolean alternar_estado_bloqueado = true;
 	
 	
-	public Controlador(Vista vista, Calendario_Horiario calendario , Configuracion configuracion , MySQL_Operations sql , BorrarFila borrarFila) {
+	public Controlador(Vista vista, Calendario_Horiario calendario , Configuracion configuracion , MySQL_Operations sql , BorrarFila borrarFila, Update update) {
 		diasDeLaSemana.add("Lunes");
 		diasDeLaSemana.add("Martes");
 		diasDeLaSemana.add("Miércoles");
@@ -202,6 +225,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		this.configuracion = configuracion;
 		this.borrarFila = borrarFila;
 		this.sql = sql;
+		this.update = update;
 		
 		vista.ventana_principal.addWindowListener(this);
 		
@@ -227,6 +251,10 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		
 		configuracion.lanzarVentana();
 		borrarFila.lanzarVentana();
+		
+		update.later.addMouseListener(this);
+		update.update_button.addMouseListener(this);
+		update.reiniciar_y_actualizar.addMouseListener(this);
 		
 		try {
 			cargarConfiguracion();
@@ -395,6 +423,10 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		
 		configuracion.comboBox_tipoDeBarra.setSelectedItem(vista.leerElTipoDeBarra());
 		tipoDeBarraAlIniciar = (String) configuracion.comboBox_tipoDeBarra.getSelectedItem();
+		
+		
+		
+		readFileFromUrlAndCheckUpdate();
 	}
 	
 
@@ -894,8 +926,44 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 			
 			accionBotonBloquear();
 			
+		}else if(e.getSource().equals(update.update_button) && update.update_button.isEnabled()) {
+			/*
+			try {
+				Desktop.getDesktop().browse(new URI(readFileFromUrlAndOpenUpdateDownloadLink()));
+			} catch (Exception er) {
+				JOptionPane.showInternalMessageDialog(null, "Error ");
+			}
+			*/
+			update.downloading.setVisible(true);
+			update.progressBar.setVisible(true);
+			update.update_button.setEnabled(false);
+			update.later.setEnabled(false);
+			
+			serviceUpdate.schedule(esperarAntesDeActualizar, 1, TimeUnit.MILLISECONDS);
 			
 			
+			
+		}else if(e.getSource().equals(update.later) && update.later.isEnabled()) {
+			update.setVisible(false);
+		}else if(e.getSource().equals(update.reiniciar_y_actualizar)) {
+			//JOptionPane.showMessageDialog(null, "reiniciar_y_actualizar");
+			
+			/*
+			 * Ejecuta el actualizador
+			 */
+			
+			try {
+				Runtime runTime = Runtime.getRuntime();
+				
+				String ruta = "download/" + downloadedFileName;
+				String directorioDeEjecutable = ruta;
+
+				Process process = runTime.exec(directorioDeEjecutable);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+
+			System.exit(0);
 			
 		}
 	}
@@ -1793,7 +1861,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 			String Query2 = "CREATE DATABASE creadorDe_horarios_dataBase CHARACTER SET utf8mb4;";
 			st.executeUpdate(Query2);
 			
-			String Query3 = "USE creadorDe_horarios_dataBase;";
+			String Query3 = "USE " + BD + ";";
 			st.executeUpdate(Query3);
 			
 			String Query4 = "CREATE TABLE horario (\r\n" + 
@@ -3089,6 +3157,166 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 			vista.lbl_insertarFila.setVisible(true);
 			guardarEstadoBotonBloquear("false");
 		}
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * Actualizador automático
+	 */
+	
+	/**
+	 * Leer un fichero de texto desde una url
+	 */
+	public void readFileFromUrlAndCheckUpdate() {
+		String link = "https://juanmatorres-dev.me/App_CreadorDeHorarios/last_version_beta.txt";
+		String tmp;
+		
+		try {
+			URL url = new URL(link);
+			
+			System.out.println("-----");
+			
+			BufferedReader bfr = new BufferedReader(new InputStreamReader(url.openStream()));
+			String inputLine;
+			while ((inputLine = bfr.readLine()) != null) {
+				/*
+				tmp = vista.textPane.getText() + inputLine + "\n";
+				vista.textPane.setText(tmp);
+				System.out.println(inputLine);
+				*/
+				//JOptionPane.showMessageDialog(null, inputLine);
+				Version_App version = new Version_App();
+				//JOptionPane.showMessageDialog(null, version.version);
+				if(!version.version.equals(inputLine)) {
+					update.actual_version.setText(update.actual_version.getText() + version.version);
+					update.last_version.setText(update.last_version.getText() + inputLine);
+					update.setLocationRelativeTo(vista.ventana_principal);
+					update.setVisible(true);
+					//JOptionPane.showMessageDialog(null, "Hay una actulización disponible\nTu versión actual: " + version.version + "\nÚltima versión: " + inputLine);
+				}
+			}
+			
+			bfr.close();
+			
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//System.out.println(link);
+		//end_loading();
+	}
+	
+	
+	/**
+	 * Obtiene el enlace de descarga actualizado
+	 */
+	public String readFileFromUrlAndOpenUpdateDownloadLink() {
+		String linkToUpdate = "?";
+		String link = "https://juanmatorres-dev.me/App_CreadorDeHorarios/last_version_download_link.txt";
+		String tmp;
+		
+		try {
+			URL url = new URL(link);
+			
+			System.out.println("-----");
+			
+			BufferedReader bfr = new BufferedReader(new InputStreamReader(url.openStream()));
+			String inputLine;
+			while ((inputLine = bfr.readLine()) != null) {
+				/*
+				tmp = vista.textPane.getText() + inputLine + "\n";
+				vista.textPane.setText(tmp);
+				System.out.println(inputLine);
+				*/
+				//JOptionPane.showMessageDialog(null, inputLine);
+				linkToUpdate = inputLine;
+				
+				
+			}
+			
+			bfr.close();
+			
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//System.out.println(link);
+		//end_loading();
+		
+		return linkToUpdate;
+	}
+	
+	/**
+	 * Descarga la nueva versión del programa
+	 */
+	public void downloadLatestVersion(String link) {
+
+
+        URL fetchWebsite = null; 
+		try {
+			fetchWebsite = new URL(link);
+		} catch (MalformedURLException e) {
+			
+			e.printStackTrace();
+		}
+		
+		/*
+		 * Crea el directorio para descargar el arhivo sino existe
+		 */
+		File directory = new File("download");
+		if(!directory.exists()) {
+			directory.mkdir();
+		}
+		
+		
+		/*
+		 * Obtiene el nombre del archivo de descarga usando el link de descarga
+		 */
+		int position_of_the_last_bar = link.lastIndexOf("/");
+		
+		//System.out.println("Posición de la última barra: " + position_of_the_last_bar);
+		//System.out.println(link.length());
+		
+		downloadedFileName = link.substring((position_of_the_last_bar + 1), link.length());
+		
+		System.out.println("Nombre del archivo de descarga : " + downloadedFileName);
+		
+		
+        Path path = Paths.get("download/" + downloadedFileName);
+        try (InputStream inputStream = fetchWebsite.openStream()) {
+            Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+
+	
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void prepararReinicioTrasActualizar() {
+		downloadLatestVersion(readFileFromUrlAndOpenUpdateDownloadLink());
+		
+		update.progressBar.setIndeterminate(false);
+		update.progressBar.setStringPainted(true);
+		update.progressBar.setValue(100);
+		update.downloading.setVisible(false);
+		update.reiniciar_y_actualizar.setVisible(true);
 	}
 
 	
