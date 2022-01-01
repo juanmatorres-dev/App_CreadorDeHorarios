@@ -33,6 +33,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
+import javax.swing.JScrollPane;
 
 public class Configuracion extends JDialog {
 
@@ -45,6 +46,7 @@ public class Configuracion extends JDialog {
 	public JButton btnBorraBD_yReconstruir;
 	public JLabel lbl_Montapuercos_Clash_Royale_izq;
 	public JLabel lbl_Montapuercos_Clash_Royale_derch;
+	public JButton btn_check_update;
 
 	/**
 	 * Launch the application.
@@ -79,7 +81,7 @@ public class Configuracion extends JDialog {
 		setIconImage(Toolkit.getDefaultToolkit().getImage("images/calendario (1).png"));
 		setTitle("Configuracion");
 		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-		setBounds(100, 100, 619, 504);
+		setBounds(100, 100, 709, 536);
 		getContentPane().setLayout(new BorderLayout());
 
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -90,7 +92,7 @@ public class Configuracion extends JDialog {
 
 		{
 			JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-			tabbedPane.setBounds(0, 0, 603, 475);
+			tabbedPane.setBounds(0, 0, 693, 497);
 			contentPanel.add(tabbedPane);
 			{
 				JPanel panel = new JPanel();
@@ -129,7 +131,7 @@ public class Configuracion extends JDialog {
 				}
 				
 				JPanel panel_autor_1 = new JPanel();
-				panel_autor_1.setBounds(32, 273, 556, 149);
+				panel_autor_1.setBounds(66, 273, 556, 149);
 				panel.add(panel_autor_1);
 				
 				TitledBorder title_autor2; // Título en forma de borde
@@ -187,12 +189,12 @@ public class Configuracion extends JDialog {
 			btnBorraBD_yReconstruir.setBackground(Color.RED);
 			btnBorraBD_yReconstruir.setForeground(Color.WHITE);
 			btnBorraBD_yReconstruir.setFont(new Font("Tahoma", Font.BOLD, 18));
-			btnBorraBD_yReconstruir.setBounds(68, 55, 456, 67);
+			btnBorraBD_yReconstruir.setBounds(68, 55, 546, 67);
 			panel_1.add(btnBorraBD_yReconstruir);
 			
 			JPanel panel_autor_1_1 = new JPanel();
 			panel_autor_1_1.setLayout(null);
-			panel_autor_1_1.setBounds(32, 173, 556, 237);
+			panel_autor_1_1.setBounds(66, 173, 556, 237);
 			panel_1.add(panel_autor_1_1);
 			
 			TitledBorder title_masInfo; // Título en forma de borde
@@ -233,7 +235,7 @@ public class Configuracion extends JDialog {
 			lbl_Montapuercos_Clash_Royale_derch = new JLabel("");
 			lbl_Montapuercos_Clash_Royale_derch.setVisible(false);
 			lbl_Montapuercos_Clash_Royale_derch.setIcon(new ImageIcon("images/Montapuercos_Clash_Royale.gif"));
-			lbl_Montapuercos_Clash_Royale_derch.setBounds(538, 67, 50, 48);
+			lbl_Montapuercos_Clash_Royale_derch.setBounds(628, 67, 50, 48);
 			panel_1.add(lbl_Montapuercos_Clash_Royale_derch);
 			{
 				JPanel panel = new JPanel();
@@ -242,7 +244,7 @@ public class Configuracion extends JDialog {
 				panel.setLayout(null);
 				{
 					JPanel panel_autor_1 = new JPanel();
-					panel_autor_1.setBounds(67, 11, 463, 96);
+					panel_autor_1.setBounds(112, 11, 463, 96);
 					panel.add(panel_autor_1);
 					panel_autor_1.setLayout(null);
 					{
@@ -322,21 +324,27 @@ public class Configuracion extends JDialog {
 				}
 				{
 					JPanel panel_version_1 = new JPanel();
-					panel_version_1.setBounds(67, 118, 463, 60);
+					panel_version_1.setBounds(112, 118, 463, 96);
 					panel.add(panel_version_1);
+					panel_version_1.setLayout(null);
 					{
 						JLabel lblVersin = new JLabel("Versión :  " + version.version);
+						lblVersin.setBounds(153, 24, 156, 17);
 						lblVersin.setFont(new Font("Tahoma", Font.BOLD, 14));
 						panel_version_1.add(lblVersin);
 					}
 					TitledBorder title_version2; // Título en forma de borde
 					title_version2 = BorderFactory.createTitledBorder("Versión");
 					panel_version_1.setBorder(title_version2);
+					
+					btn_check_update = new JButton("Comprobar si hay actualizaciones");
+					btn_check_update.setBounds(109, 62, 244, 23);
+					panel_version_1.add(btn_check_update);
 				}
 
 				panel_iconos_1 = new JPanel();
 				panel_iconos_1.setLayout(null);
-				panel_iconos_1.setBounds(20, 189, 557, 235);
+				panel_iconos_1.setBounds(65, 223, 557, 235);
 				panel.add(panel_iconos_1);
 
 				JLabel lblLink = new JLabel("<HTML><U>(logo) </U></FONT></HTML>");
@@ -449,7 +457,7 @@ public class Configuracion extends JDialog {
 			
 			JPanel panel_origen = new JPanel();
 			panel_origen.setLayout(null);
-			panel_origen.setBounds(20, 11, 557, 77);
+			panel_origen.setBounds(65, 11, 557, 77);
 			panel.add(panel_origen);
 			
 			TitledBorder title_panel_origen; // Título en forma de borde
@@ -482,7 +490,7 @@ public class Configuracion extends JDialog {
 			
 			JPanel panel_propietario = new JPanel();
 			panel_propietario.setLayout(null);
-			panel_propietario.setBounds(20, 110, 557, 77);
+			panel_propietario.setBounds(65, 110, 557, 77);
 			panel.add(panel_propietario);
 			
 			TitledBorder title_panel_propietario; // Título en forma de borde
@@ -515,7 +523,7 @@ public class Configuracion extends JDialog {
 			
 			JPanel panel_videoJuego_al_que_pertenece = new JPanel();
 			panel_videoJuego_al_que_pertenece.setLayout(null);
-			panel_videoJuego_al_que_pertenece.setBounds(20, 215, 557, 77);
+			panel_videoJuego_al_que_pertenece.setBounds(65, 215, 557, 77);
 			panel.add(panel_videoJuego_al_que_pertenece);
 			
 			TitledBorder title_panel_videoJuego_al_que_pertenece; // Título en forma de borde
@@ -548,7 +556,7 @@ public class Configuracion extends JDialog {
 			
 			JPanel panel_mas_informacion_acerca_del_personaje = new JPanel();
 			panel_mas_informacion_acerca_del_personaje.setLayout(null);
-			panel_mas_informacion_acerca_del_personaje.setBounds(20, 315, 557, 77);
+			panel_mas_informacion_acerca_del_personaje.setBounds(65, 315, 557, 77);
 			panel.add(panel_mas_informacion_acerca_del_personaje);
 			
 			TitledBorder title_panel_mas_informacion_acerca_del_personaje; // Título en forma de borde
@@ -585,7 +593,7 @@ public class Configuracion extends JDialog {
 			
 			JPanel panel_web = new JPanel();
 			panel_web.setLayout(null);
-			panel_web.setBounds(20, 37, 557, 77);
+			panel_web.setBounds(65, 37, 557, 77);
 			panel_2.add(panel_web);
 			
 			TitledBorder title_panel_web; // Título en forma de borde
@@ -618,7 +626,7 @@ public class Configuracion extends JDialog {
 			
 			JPanel panel_ayuda = new JPanel();
 			panel_ayuda.setLayout(null);
-			panel_ayuda.setBounds(20, 146, 557, 77);
+			panel_ayuda.setBounds(65, 146, 557, 77);
 			panel_2.add(panel_ayuda);
 			
 			TitledBorder title_panel_ayuda; // Título en forma de borde
@@ -651,14 +659,14 @@ public class Configuracion extends JDialog {
 			
 			JPanel panel_comprobar_si_hay_actualizaciones = new JPanel();
 			panel_comprobar_si_hay_actualizaciones.setLayout(null);
-			panel_comprobar_si_hay_actualizaciones.setBounds(20, 266, 557, 77);
+			panel_comprobar_si_hay_actualizaciones.setBounds(65, 266, 557, 77);
 			panel_2.add(panel_comprobar_si_hay_actualizaciones);
 			
 			TitledBorder title_panel_comprobar_si_hay_actualizaciones; // Título en forma de borde
-			title_panel_comprobar_si_hay_actualizaciones = BorderFactory.createTitledBorder("Comprobar si hay actualizaciones");
+			title_panel_comprobar_si_hay_actualizaciones = BorderFactory.createTitledBorder("Ver historial de cambios");
 			panel_comprobar_si_hay_actualizaciones.setBorder(title_panel_comprobar_si_hay_actualizaciones);
 			
-			JLabel lblLink_1_1_2 = new JLabel("<HTML><U>(Comprobar) </U></FONT></HTML>");
+			JLabel lblLink_1_1_2 = new JLabel("<HTML><U>(Ver) </U></FONT></HTML>");
 			lblLink_1_1_2.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseEntered(MouseEvent e) {

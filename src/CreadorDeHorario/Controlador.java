@@ -109,6 +109,8 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	private String BD = dataBaseInfo.BD;
 	
 	
+	private boolean actualizacion_necesaria = false;
+	
 	private String downloadedFileName;
 	
 	private boolean laConexionHaFallado = false;
@@ -244,6 +246,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		configuracion.test_notificaciones.addMouseListener(this);
 		configuracion.comboBox_tipoDeBarra.addMouseListener(this);
 		configuracion.btnBorraBD_yReconstruir.addMouseListener(this);
+		configuracion.btn_check_update.addMouseListener(this);
 		
 		vista.table.addMouseListener(this);
 		
@@ -263,7 +266,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		}
 		
 		vista.lbl_insertarFila.setVisible(false);
-		vista.ventana_principal.getContentPane().setCursor(new Cursor(Cursor.WAIT_CURSOR)); // Pone a todo lo que hay en la venntana el cursor Wait
+		//vista.ventana_principal.getContentPane().setCursor(new Cursor(Cursor.WAIT_CURSOR)); // Pone a todo lo que hay en la venntana el cursor Wait
 		iniciar_Conexion_Con_Servidor();
 		vista.ventana_principal.getContentPane().setCursor(new Cursor(Cursor.DEFAULT_CURSOR)); // Pone a todo lo que hay en la venntana el cursor Default
 		if(conexionEstablecida) {
@@ -965,6 +968,14 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 
 			System.exit(0);
 			
+		}else if(e.getSource().equals(configuracion.btn_check_update)) {
+			//JOptionPane.showMessageDialog(null, "btn_check_update");
+			update.last_version.setText("Última versión:   ");
+			update.actual_version.setText("Versión actual:   ");
+			readFileFromUrlAndCheckUpdate();
+			if(!actualizacion_necesaria) {
+				JOptionPane.showMessageDialog(null, "Tienes la última versión");
+			}
 		}
 	}
 	
@@ -3196,7 +3207,10 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 					update.last_version.setText(update.last_version.getText() + inputLine);
 					update.setLocationRelativeTo(vista.ventana_principal);
 					update.setVisible(true);
+					actualizacion_necesaria = true;
 					//JOptionPane.showMessageDialog(null, "Hay una actulización disponible\nTu versión actual: " + version.version + "\nÚltima versión: " + inputLine);
+				}else {
+					actualizacion_necesaria = false;
 				}
 			}
 			
