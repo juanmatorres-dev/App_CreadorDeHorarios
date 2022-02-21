@@ -1,1 +1,1 @@
-https://github.com/juanmatorres-dev/App_CreadorDeHorarios/releases/download/v.8.0.0_beta/Creador.De.Horarios_installer_v.8.0.0_beta.exe
+https://github.com/juanmatorres-dev/App_CreadorDeHorarios/releases/download/v.8.0.1_beta/Creador.De.Horarios_installer_v.8.0.1_beta.exe
