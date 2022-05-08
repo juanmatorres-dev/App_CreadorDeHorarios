@@ -2536,7 +2536,8 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 					
 					if (mostrarNotificacion) {
 						if(configuracion.chckbxMostrarNotificaciones.isSelected()) {
-							mostrarNotificacion("Ha comenzado", (String) vista.table.getValueAt(filaParaSeleccionar, diaDeLaSemana()));
+							mostrarNotificacion("Ha comenzado", (String) vista.table.getValueAt(filaParaSeleccionar, diaDeLaSemana()) + "\r\r"
+									+ "[" + vista.lbl_tiempo_restante.getText() + "]");
 						}
 						
 						mostrarNotificacion = false;
