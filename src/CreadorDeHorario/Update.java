@@ -84,7 +84,7 @@ public class Update extends JDialog {
 		progressBar.setBounds(108, 134, 220, 16);
 		contentPanel.add(progressBar);
 		
-		reiniciar_y_actualizar = new JButton("Reincia para actualizar");
+		reiniciar_y_actualizar = new JButton("Reinicia para actualizar");
 		reiniciar_y_actualizar.setVisible(false);
 		reiniciar_y_actualizar.setBounds(128, 95, 177, 23);
 		contentPanel.add(reiniciar_y_actualizar);

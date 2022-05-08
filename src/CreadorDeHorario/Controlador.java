@@ -438,7 +438,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	 */
 	public void ponerNombreDelMes_y_AnioActual() {
 		Calendario_Horiario calendario = new Calendario_Horiario();
-		vista.ventana_principal.setTitle("Creador de horario " + " | " 
+		vista.ventana_principal.setTitle("Creador de horarios " + " | " 
 				+ calendario.diasSemana[calendario.getDiaSemana(calendario.getDia())] + " , " +  
 				calendario.getDia() + " de " + calendario.getMes().toLowerCase() + " de " + calendario.getAnio());
 	}
