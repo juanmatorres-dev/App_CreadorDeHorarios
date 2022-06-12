@@ -16,8 +16,6 @@ import javax.swing.JOptionPane;
 
 import java.awt.Toolkit;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Scanner;
@@ -31,7 +29,17 @@ import javax.swing.ListSelectionModel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JSlider;
-import javax.swing.JToggleButton;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import java.awt.Component;
+import javax.swing.JMenuItem;
+import java.awt.ComponentOrientation;
+import java.awt.Color;
+import javax.swing.border.EtchedBorder;
+import java.awt.FlowLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 
 
 
@@ -77,6 +85,10 @@ public class Vista {
 	
 	
 	private static final DefaultTableCellRenderer  defaultTableCellRenderer = new DefaultTableCellRenderer();
+	public JMenu nombre_usuario;
+	public JMenuBar menuBar_usuario;
+	public JLabel loading_user;
+	public JMenuItem cerrar_sesion;
 	
 	
 	
@@ -109,7 +121,7 @@ public class Vista {
 		ventana_principal = new JFrame();
 		ventana_principal.setResizable(false);
 		ventana_principal.setIconImage(Toolkit.getDefaultToolkit().getImage("images/calendario (1).png"));
-		ventana_principal.setBounds(100, 100, 1003, 776);
+		ventana_principal.setBounds(100, 100, 1003, 818);
 		ventana_principal.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		ventana_principal.setLocationRelativeTo(null);
 		ventana_principal.getContentPane().setLayout(new BorderLayout(0, 0));
@@ -120,7 +132,7 @@ public class Vista {
 		panelDiasDeLaSemanaEnTexto.setLayout(null);
 		
 		JPanel panel_botones_inferiores = new JPanel();
-		panel_botones_inferiores.setBounds(0, 590, 997, 157);
+		panel_botones_inferiores.setBounds(0, 622, 997, 157);
 		panelDiasDeLaSemanaEnTexto.add(panel_botones_inferiores);
 		panel_botones_inferiores.setLayout(null);
 		
@@ -288,14 +300,14 @@ public class Vista {
 		panel_botones_inferiores.add(lbl_loading_bloquear);
 		
 		scrollPane = new JScrollPane();
-		scrollPane.setBounds(30, 31, 954, 560);
+		scrollPane.setBounds(30, 63, 954, 560);
 		panelDiasDeLaSemanaEnTexto.add(scrollPane);
 		
 		table = new JTable();
 		scrollPane.setViewportView(table);
 		
 		panel_bar_loader = new JPanel();
-		panel_bar_loader.setBounds(24, 38, 939, 457);
+		panel_bar_loader.setBounds(24, 70, 939, 457);
 		panelDiasDeLaSemanaEnTexto.add(panel_bar_loader);
 		panel_bar_loader.setLayout(null);
 		
@@ -305,7 +317,7 @@ public class Vista {
 		panel_bar_loader.add(lbl_bar_table_loader);
 		
 		JPanel panel_slider_horas = new JPanel();
-		panel_slider_horas.setBounds(3, 41, 25, 550);
+		panel_slider_horas.setBounds(3, 73, 25, 550);
 		panelDiasDeLaSemanaEnTexto.add(panel_slider_horas);
 		panel_slider_horas.setLayout(null);
 		
@@ -354,7 +366,7 @@ public class Vista {
 		slider_horas.setOrientation(SwingConstants.VERTICAL);
 		
 		panel_slider_dias = new JPanel();
-		panel_slider_dias.setBounds(10, 0, 968, 27);
+		panel_slider_dias.setBounds(10, 32, 968, 27);
 		panelDiasDeLaSemanaEnTexto.add(panel_slider_dias);
 		panel_slider_dias.setLayout(null);
 		
@@ -400,7 +412,41 @@ public class Vista {
 		slider_dias.setPaintTrack(false);
 		slider_dias.setFocusable(false);
 		slider_dias.setBounds(10, 5, 944, 22);
-		panel_slider_dias.add(slider_dias);	
+		panel_slider_dias.add(slider_dias);
+		
+		JPanel panel_menu = new JPanel();
+		panel_menu.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+		panel_menu.setBounds(0, 0, 987, 27);
+		panelDiasDeLaSemanaEnTexto.add(panel_menu);
+		FlowLayout fl_panel_menu = new FlowLayout(FlowLayout.RIGHT, 5, 5);
+		panel_menu.setLayout(fl_panel_menu);
+		
+		menuBar_usuario = new JMenuBar();
+		menuBar_usuario.setVisible(false);
+		menuBar_usuario.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		menuBar_usuario.setBackground(new Color(255, 250, 250));
+		menuBar_usuario.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+		menuBar_usuario.setAlignmentY(Component.CENTER_ALIGNMENT);
+		
+		panel_menu.add(menuBar_usuario);
+		
+		nombre_usuario = new JMenu("");
+		nombre_usuario.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+		nombre_usuario.setFont(new Font("Segoe UI", Font.BOLD, 12));
+		nombre_usuario.setAlignmentX(Component.RIGHT_ALIGNMENT);
+		nombre_usuario.setAlignmentY(0.1f);
+		nombre_usuario.setHorizontalAlignment(SwingConstants.LEFT);
+		nombre_usuario.setHorizontalTextPosition(SwingConstants.LEFT);
+		menuBar_usuario.add(nombre_usuario);
+		
+		cerrar_sesion = new JMenuItem("Cerrar sesión");
+		cerrar_sesion.setVerticalTextPosition(SwingConstants.TOP);
+		cerrar_sesion.setVerticalAlignment(SwingConstants.TOP);
+		nombre_usuario.add(cerrar_sesion);
+		
+		loading_user = new JLabel("");
+		loading_user.setIcon(new ImageIcon("images/Loading.gif"));
+		panel_menu.add(loading_user);
 		slider_dias.setValue(15);
 		
 		

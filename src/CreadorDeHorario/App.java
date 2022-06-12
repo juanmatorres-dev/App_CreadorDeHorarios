@@ -24,7 +24,8 @@ public class App {
 		BorrarFila borrarFila = new BorrarFila();
 		MySQL_Operations sql = new MySQL_Operations();
 		Update update = new Update();
-		Controlador controlador = new Controlador(vista , calendario , configuracion , sql, borrarFila, update);
+		Login login = new Login();
+		Controlador controlador = new Controlador(vista , calendario , configuracion , sql, borrarFila, update, login);
 		
 		
 	}

@@ -97,7 +97,7 @@ import org.w3c.dom.events.MouseEvent;
  * @author Juan Manuel Torres Martínez
  *
  */
-public class Controlador implements MouseListener , WindowListener , KeyListener , TableModelListener  {
+public class Controlador implements MouseListener , WindowListener , KeyListener , TableModelListener, ActionListener  {
 	/**
 	 * Contiene la información de la conexión de la base de datos
 	 */
@@ -121,6 +121,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	private BorrarFila borrarFila;
 	private MySQL_Operations sql;
 	private Update update;
+	private Login login;
 	
 	private int mesActual; // Guardan el mes y año actuales al abrir el Calendario
 	private int anioActual;
@@ -214,7 +215,13 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	private boolean alternar_estado_bloqueado = true;
 	
 	
-	public Controlador(Vista vista, Calendario_Horiario calendario , Configuracion configuracion , MySQL_Operations sql , BorrarFila borrarFila, Update update) {
+	public Controlador(Vista vista, Calendario_Horiario calendario , Configuracion configuracion , MySQL_Operations sql , BorrarFila borrarFila, Update update, Login login) {
+		
+		login.lanzarVentana();
+		login.setLocationRelativeTo(vista.ventana_principal); // antes de hacer visible la ventana hay que centrarla
+		login.setVisible(true);
+		
+		
 		diasDeLaSemana.add("Lunes");
 		diasDeLaSemana.add("Martes");
 		diasDeLaSemana.add("Miércoles");
@@ -239,6 +246,8 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		vista.lbl_borrarFila.addMouseListener(this);
 		vista.lbl_imprimir.addMouseListener(this);
 		vista.lbl_bloquear.addMouseListener(this);
+		
+		vista.cerrar_sesion.addActionListener(this);
 		
 		configuracion.chckbxMostrarSegundosReloj.addMouseListener(this);
 		configuracion.addWindowListener(this);
@@ -430,6 +439,8 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		
 		
 		readFileFromUrlAndCheckUpdate();
+		
+		leerUsuarioLogueado();
 	}
 	
 
@@ -3332,6 +3343,27 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		update.progressBar.setValue(100);
 		update.downloading.setVisible(false);
 		update.reiniciar_y_actualizar.setVisible(true);
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void leerUsuarioLogueado() {
+		vista.nombre_usuario.setIcon(new ImageIcon(""));
+		vista.nombre_usuario.setText("juanmatorres-dev");
+		//vista.nombre_usuario.setIcon(new ImageIcon("images/user/default/user_16_px.png"));
+		vista.loading_user.setVisible(false);
+		vista.menuBar_usuario.setVisible(true);
+	}
+
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource().equals(vista.cerrar_sesion)) {
+			JOptionPane.showMessageDialog(null, "Cerrar sesión");
+		}
+		
 	}
 
 	
