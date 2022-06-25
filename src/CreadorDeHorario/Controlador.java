@@ -26,6 +26,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.event.WindowStateListener;
 import java.awt.print.PrinterException;
+import java.beans.PropertyVetoException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -45,6 +46,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Time;
@@ -65,6 +67,7 @@ import java.util.Vector;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import javax.crypto.Cipher;
 import javax.swing.BorderFactory;
@@ -77,6 +80,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.MatteBorder;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -90,6 +96,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import org.w3c.dom.events.MouseEvent;
+
 
 
 
@@ -215,12 +222,14 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	private boolean alternar_estado_bloqueado = true;
 	
 	
+	/*
+	 * Estados de los ojos de los campos de contraseña
+	 */
+	private boolean visible_pass_register = false;
+	private boolean visible_repeat_pass_register = false;
+	private boolean visible_pass_login = false;
+	
 	public Controlador(Vista vista, Calendario_Horiario calendario , Configuracion configuracion , MySQL_Operations sql , BorrarFila borrarFila, Update update, Login login) {
-		
-		login.lanzarVentana();
-		login.setLocationRelativeTo(vista.ventana_principal); // antes de hacer visible la ventana hay que centrarla
-		login.setVisible(true);
-		
 		
 		diasDeLaSemana.add("Lunes");
 		diasDeLaSemana.add("Martes");
@@ -235,6 +244,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		this.borrarFila = borrarFila;
 		this.sql = sql;
 		this.update = update;
+		this.login = login;
 		
 		vista.ventana_principal.addWindowListener(this);
 		
@@ -267,6 +277,18 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		update.later.addMouseListener(this);
 		update.update_button.addMouseListener(this);
 		update.reiniciar_y_actualizar.addMouseListener(this);
+		
+		login.btn_Registrarse.addMouseListener(this);
+		login.btn_login.addMouseListener(this);
+		login.ojo_pass_register.addMouseListener(this);
+		login.ojo_repeat_pass_register.addMouseListener(this);
+		login.ojo_pass_login.addMouseListener(this);
+		
+		login.lanzarVentana();
+		login.setLocationRelativeTo(vista.ventana_principal); // antes de hacer visible la ventana hay que centrarla
+		login.setVisible(true);
+		
+		//loginController.mostrarLogin();
 		
 		try {
 			cargarConfiguracion();
@@ -987,6 +1009,21 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 			if(!actualizacion_necesaria) {
 				JOptionPane.showMessageDialog(null, "Tienes la última versión");
 			}
+		}else if(e.getSource().equals(login.btn_login)) {
+			JOptionPane.showMessageDialog(null, "login");
+		}else if(e.getSource().equals(login.btn_Registrarse)) {
+			//JOptionPane.showMessageDialog(null, "registrarse 😎");
+			
+			registrarUsuario();
+			
+			//🔥
+			
+		}else if(e.getSource().equals(login.ojo_pass_register)) {
+			ver_ocultar_password(visible_pass_register, "ojo_pass_register");
+		}else if(e.getSource().equals(login.ojo_repeat_pass_register)) {
+			ver_ocultar_password(visible_repeat_pass_register, "ojo_repeat_pass_register");
+		}else if(e.getSource().equals(login.ojo_pass_login)) {
+			ver_ocultar_password(visible_pass_login, "ojo_pass_login");
 		}
 	}
 	
@@ -3352,6 +3389,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	public void leerUsuarioLogueado() {
 		vista.nombre_usuario.setIcon(new ImageIcon(""));
 		vista.nombre_usuario.setText("juanmatorres-dev");
+		vista.nombre_usuario.setText(login.user_input.getText());
 		//vista.nombre_usuario.setIcon(new ImageIcon("images/user/default/user_16_px.png"));
 		vista.loading_user.setVisible(false);
 		vista.menuBar_usuario.setVisible(true);
@@ -3366,6 +3404,186 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		
 	}
 
+	/**
+	 * 
+	 */
+	@SuppressWarnings("deprecation")
+	public void registrarUsuario() {
+		
+		boolean registroValido = false;
+		boolean todosLosCamposRellenos = false;
+		
+		/**
+		 * Comprobar si los campos están completos
+		 */
+		// JOptionPane.showMessageDialog(null, login.input_password.getPassword());
+		if (login.input_nombre_de_usuario.getText().equals("") || login.input_email.getText().equals("")
+				|| login.input_password.getText().equals("") || login.input_repeat_password.getText().equals("")) {
+			login.internalFrame.setVisible(true);
+			login.completaTodosLosCamposLabel.setVisible(true);
+			login.emailNoValido.setVisible(false);
+			login.input_email.setBorder(new MatteBorder(1, 1, 1, 1, (Color) new Color(122, 138, 153)));
+			try {
+				login.internalFrame.setMaximum(true);
+			} catch (PropertyVetoException e) {
+				e.printStackTrace();
+			}
+		} else {
+			login.internalFrame.setVisible(false);
+			login.completaTodosLosCamposLabel.setVisible(false);
+			todosLosCamposRellenos = true;
+		}
+
+		/**
+		 * Comprobaciones de campos
+		 */
+
+		/*
+		 * Email
+		 */
+		String emailRegexp = "[^@]+@[^@]+\\.[a-zA-Z]{2,}";
+		
+		if(todosLosCamposRellenos) {
+			if (Pattern.matches(emailRegexp, login.input_email.getText())) {
+				login.input_email.setBorder(new MatteBorder(1, 1, 1, 1, (Color) new Color(122, 138, 153)));
+				registroValido = true;
+				login.emailNoValido.setVisible(false);
+			} else {
+				login.input_email.setBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 0, 0), Color.RED));
+				login.internalFrame.setVisible(true);
+				try {
+					login.internalFrame.setMaximum(true);
+				} catch (PropertyVetoException e) {
+					e.printStackTrace();
+				}
+				login.emailNoValido.setVisible(true);
+			}
+		}
+		
+		/*
+		 * Comprobamos los campos de contraseña y sus tipo visibles
+		 */
+		
+		if(login.input_password.isVisible()) {
+			System.out.println("pass visible");
+			if(login.input_password.getText() != login.textField_pass_register.getText()) {
+				login.textField_pass_register.setText(login.input_password.getText());
+			}
+		}else if(login.textField_pass_register.isVisible()) {
+			System.out.println("text visible");
+			if(login.input_password.getText() != login.textField_pass_register.getText()) {
+				login.input_password.setText(login.textField_pass_register.getText());
+			}
+		}
+		
+		
+		
+		
+		
+		/**
+		 * Obtenemos todos los datos de los campos
+		 */
+		String nombreUsuario = login.input_nombre_de_usuario.getText();
+		String email = login.input_email.getText();
+		String password = login.input_password.getText();
+		String idioma = login.comboBox_idioma.getSelectedItem().toString();
+		String imagen = login.imagen_user.getIcon().toString();
+		
+		/*JOptionPane.showMessageDialog(null, "nombreUsuario : " + nombreUsuario + 
+											"\nemail : " + email +
+											"\npassword : " + password + 
+											"\nidioma : " + idioma +
+											"\nimagen : " + imagen);*/
+		//System.out.print(imagen);
+		
+		if(registroValido) {
+			insertarNuevoUsuario(nombreUsuario, email, password, imagen, idioma);
+		}
+	}
 	
+	/**
+	 * Crear el nuevo usuario en la BD
+	*/
+	public void insertarNuevoUsuario(String nombreUsuario, String email ,String password, String imagen, String idioma) {
+
+		closeConnection();
+		iniciar_Conexion_Con_Servidor();
+		try {
+			String Query = "INSERT INTO usuario(nombre_usuario, email, password, imagen, idioma, numero_horarios, miembro_desde, bloqueado, token_usuario)"
+					+ " VALUES (?, ?, ? , ?, ?, 0 , now(), 0, 'user_register');";
+			
+			//Statement st = conexion.createStatement();
+			//st.executeUpdate(Query);
+			
+			PreparedStatement pStmt = conexion.prepareStatement(Query);
+			pStmt.setString(1, nombreUsuario);
+			pStmt.setString(2, email);
+			pStmt.setString(3, password);
+			pStmt.setString(4, imagen);
+			pStmt.setString(5, idioma);
+			
+			int numUpd = pStmt.executeUpdate();
+			
+			System.out.println("Usuario creado correctamente. (" + numUpd + ")");
+		}
+		catch (Exception ex) {
+			System.out.println(ex);
+			System.out.println("Error al crear usuario");
+		}
+	}
+	
+	
+	/**
+	 * Hace visible u oculta la contraseña de los campos de contraseña
+	 */
+	public void ver_ocultar_password(boolean estado_ojo, String id_ojo) {
+		if(estado_ojo) {
+			if(id_ojo.equals("ojo_pass_register")) {
+				login.ojo_pass_register.setIcon(new ImageIcon("images/login/no_visible_16px.png"));
+				visible_pass_register = false;
+				login.input_password.setText(login.textField_pass_register.getText());
+				login.input_password.setVisible(true);
+				login.textField_pass_register.setVisible(false);
+				login.input_password.requestFocus();
+			}else if(id_ojo.equals("ojo_repeat_pass_register")) {
+				login.ojo_repeat_pass_register.setIcon(new ImageIcon("images/login/no_visible_16px.png"));
+				visible_repeat_pass_register = false;
+				login.input_repeat_password.setText(login.textField_repeat_pass_register.getText());
+				login.input_repeat_password.setVisible(true);
+				login.textField_repeat_pass_register.setVisible(false);
+				login.input_repeat_password.requestFocus();
+			}else if(id_ojo.equals("ojo_pass_login")) {
+				login.ojo_pass_login.setIcon(new ImageIcon("images/login/no_visible_16px.png"));
+				visible_pass_login = false;
+				login.password_input_login.setText(login.textField_pass_login.getText());
+				login.password_input_login.setVisible(true);
+				login.textField_pass_login.setVisible(false);
+				login.password_input_login.requestFocus();
+			}
+		}else {
+			if(id_ojo.equals("ojo_pass_register")) {
+				login.ojo_pass_register.setIcon(new ImageIcon("images/login/visible_16px.png"));
+				visible_pass_register = true;
+				login.textField_pass_register.setText(login.input_password.getText());
+				login.textField_pass_register.setVisible(true);
+				login.input_password.setVisible(false);
+				login.textField_pass_register.requestFocus();
+			}else if(id_ojo.equals("ojo_repeat_pass_register")) {
+				login.ojo_repeat_pass_register.setIcon(new ImageIcon("images/login/visible_16px.png"));
+				visible_repeat_pass_register = true;
+				login.textField_repeat_pass_register.setText(login.input_repeat_password.getText());
+				login.textField_repeat_pass_register.setVisible(true);
+				login.input_repeat_password.setVisible(false);
+				login.textField_repeat_pass_register.requestFocus();
+			}else if(id_ojo.equals("ojo_pass_login")) {
+				login.ojo_pass_login.setIcon(new ImageIcon("images/login/visible_16px.png"));
+				visible_pass_login = true;
+				login.textField_pass_login.setText(login.password_input_login.getText());
+				login.textField_pass_login.setVisible(true);
+				login.password_input_login.setVisible(false);
+				login.textField_pass_login.requestFocus();
+			}
+		}
+	}
 
 }

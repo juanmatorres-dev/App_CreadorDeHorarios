@@ -21,6 +21,7 @@ import java.awt.Font;
 import javax.swing.JFormattedTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.AbstractListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.JComboBox;
@@ -30,22 +31,40 @@ import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 import java.util.Map;
 import java.awt.ComponentOrientation;
+import javax.swing.JInternalFrame;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.UIManager;
+import javax.swing.border.MatteBorder;
+import javax.swing.JCheckBox;
 
 public class Login extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
-	private JTextField user_input;
-	private JPasswordField password_input;
-	private JTextField input_nombre_de_usuario;
-	private JPasswordField input_password;
-	private JPasswordField input_repeat_password;
-	private JTextField input_email;
-	private JLabel imagen_user;
+	public JTextField user_input;
+	public JPasswordField password_input_login;
+	public JTextField input_nombre_de_usuario;
+	public JPasswordField input_password;
+	public JPasswordField input_repeat_password;
+	public JTextField input_email;
+	public JLabel imagen_user;
 	private JPanel registro;
 	private JPanel login;
 	private JPanel user_image;
 	private JLabel lbl_Registrarse;
-	private JButton btn_Registrarse;
+	public JButton btn_Registrarse;
+	public JButton btn_login;
+	public JInternalFrame internalFrame;
+	public JComboBox comboBox_idioma;
+	public JLabel completaTodosLosCamposLabel;
+	public JLabel emailNoValido;
+	public JLabel ojo_pass_register;
+	public JTextField textField_pass_register;
+	public JLabel ojo_repeat_pass_register;
+	public JTextField textField_repeat_pass_register;
+	private JPanel panel_ojo_login;
+	public JTextField textField_pass_login;
+	public JLabel ojo_pass_login;
 
 	/**
 	 * Launch the application.
@@ -66,9 +85,9 @@ public class Login extends JDialog {
 	 * Create the dialog.
 	 */
 	public Login() {
-		setResizable(false);
 		setModal(true);
-		setBounds(100, 100, 807, 569);
+		setResizable(false);
+		setBounds(100, 100, 810, 569);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBackground(Color.WHITE);
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -78,9 +97,45 @@ public class Login extends JDialog {
 		registro = new JPanel();
 		registro.setBackground(Color.WHITE);
 		registro.setVisible(false);
+		
+		JPanel panel = new JPanel();
+		panel.setOpaque(false);
+		panel.setBounds(347, 0, 447, 530);
+		contentPanel.add(panel);
+		panel.setLayout(null);
+		
+		internalFrame = new JInternalFrame("");
+		internalFrame.setFrameIcon(new ImageIcon("images/login/info_16px.png"));
+		internalFrame.setBounds(0, 0, 447, 530);
+		panel.add(internalFrame);
+		internalFrame.setEnabled(false);
+		internalFrame.getContentPane().setLayout(null);
+		
+		completaTodosLosCamposLabel = new JLabel("Debes completar todos los campos");
+		completaTodosLosCamposLabel.setForeground(Color.RED);
+		completaTodosLosCamposLabel.setFont(new Font("Tahoma", Font.BOLD, 13));
+		completaTodosLosCamposLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		completaTodosLosCamposLabel.setBounds(0, 11, 264, 27);
+		internalFrame.getContentPane().add(completaTodosLosCamposLabel);
+		
+		emailNoValido = new JLabel("<=  El email no tiene un formato válido");
+		emailNoValido.setVisible(false);
+		emailNoValido.setHorizontalAlignment(SwingConstants.CENTER);
+		emailNoValido.setForeground(Color.RED);
+		emailNoValido.setFont(new Font("Tahoma", Font.BOLD, 13));
+		emailNoValido.setBounds(0, 143, 277, 27);
+		internalFrame.getContentPane().add(emailNoValido);
 		registro.setBounds(0, 0, 350, 519);
 		contentPanel.add(registro);
 		registro.setLayout(null);
+		
+		textField_pass_register = new JTextField();
+		textField_pass_register.setBorder(new MatteBorder(1, 1, 1, 0, (Color) new Color(122, 138, 153)));
+		textField_pass_register.setVisible(false);
+		textField_pass_register.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		textField_pass_register.setBounds(10, 251, 275, 40);
+		registro.add(textField_pass_register);
+		textField_pass_register.setColumns(10);
 		
 		JLabel lb_nombre_de_usuario = new JLabel("Nombre de usuario: ");
 		lb_nombre_de_usuario.setHorizontalAlignment(SwingConstants.CENTER);
@@ -95,12 +150,15 @@ public class Login extends JDialog {
 		registro.add(lb_password);
 		
 		input_nombre_de_usuario = new JTextField();
+		input_nombre_de_usuario.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		input_nombre_de_usuario.setColumns(10);
 		input_nombre_de_usuario.setBounds(10, 88, 314, 39);
 		registro.add(input_nombre_de_usuario);
 		
 		input_password = new JPasswordField();
-		input_password.setBounds(10, 251, 314, 40);
+		input_password.setBorder(new MatteBorder(1, 1, 1, 0, (Color) new Color(122, 138, 153)));
+		input_password.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		input_password.setBounds(10, 251, 275, 40);
 		registro.add(input_password);
 		
 		JLabel lb_repeat_password = new JLabel("Repetir Contraseña:");
@@ -110,10 +168,13 @@ public class Login extends JDialog {
 		registro.add(lb_repeat_password);
 		
 		input_repeat_password = new JPasswordField();
-		input_repeat_password.setBounds(10, 327, 314, 40);
+		input_repeat_password.setBorder(new MatteBorder(1, 1, 1, 0, (Color) new Color(122, 138, 153)));
+		input_repeat_password.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		input_repeat_password.setBounds(10, 327, 275, 40);
 		registro.add(input_repeat_password);
 		
 		input_email = new JTextField();
+		input_email.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		input_email.setColumns(10);
 		input_email.setBounds(10, 164, 314, 39);
 		registro.add(input_email);
@@ -130,7 +191,7 @@ public class Login extends JDialog {
 		lb_idioma.setBounds(10, 378, 101, 39);
 		registro.add(lb_idioma);
 		
-		JComboBox comboBox_idioma = new JComboBox();
+		comboBox_idioma = new JComboBox();
 		comboBox_idioma.setModel(new DefaultComboBoxModel(new String[] {"español [es]"}));
 		comboBox_idioma.setBounds(10, 428, 113, 22);
 		registro.add(comboBox_idioma);
@@ -186,6 +247,39 @@ public class Login extends JDialog {
 		lblCrearCuenta.setBounds(0, 0, 346, 50);
 		registro.add(lblCrearCuenta);
 		
+		JPanel panel_ojo_pass = new JPanel();
+		panel_ojo_pass.setBorder(new MatteBorder(1, 0, 1, 1, (Color) new Color(122, 138, 153)));
+		panel_ojo_pass.setBackground(Color.WHITE);
+		panel_ojo_pass.setBounds(284, 251, 39, 40);
+		registro.add(panel_ojo_pass);
+		panel_ojo_pass.setLayout(null);
+		
+		ojo_pass_register = new JLabel("");
+		ojo_pass_register.setHorizontalAlignment(SwingConstants.CENTER);
+		ojo_pass_register.setIcon(new ImageIcon("images/login/no_visible_16px.png"));
+		ojo_pass_register.setBounds(0, 0, 39, 40);
+		panel_ojo_pass.add(ojo_pass_register);
+		
+		JPanel panel_ojo_repeat_pass = new JPanel();
+		panel_ojo_repeat_pass.setLayout(null);
+		panel_ojo_repeat_pass.setBorder(new MatteBorder(1, 0, 1, 1, (Color) new Color(122, 138, 153)));
+		panel_ojo_repeat_pass.setBackground(Color.WHITE);
+		panel_ojo_repeat_pass.setBounds(285, 327, 39, 40);
+		registro.add(panel_ojo_repeat_pass);
+		
+		ojo_repeat_pass_register = new JLabel("");
+		ojo_repeat_pass_register.setIcon(new ImageIcon("images/login/no_visible_16px.png"));
+		ojo_repeat_pass_register.setHorizontalAlignment(SwingConstants.CENTER);
+		ojo_repeat_pass_register.setBounds(0, 0, 39, 40);
+		panel_ojo_repeat_pass.add(ojo_repeat_pass_register);
+		
+		textField_repeat_pass_register = new JTextField();
+		textField_repeat_pass_register.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		textField_repeat_pass_register.setBorder(new MatteBorder(1, 1, 1, 0, (Color) new Color(122, 138, 153)));
+		textField_repeat_pass_register.setBounds(10, 327, 275, 40);
+		registro.add(textField_repeat_pass_register);
+		textField_repeat_pass_register.setColumns(10);
+		
 		login = new JPanel();
 		login.setBackground(Color.WHITE);
 		login.setBounds(0, 0, 346, 437);
@@ -200,28 +294,31 @@ public class Login extends JDialog {
 		}
 		
 		JLabel user_lb = new JLabel("Usuario: ");
-		user_lb.setBounds(21, 168, 101, 40);
+		user_lb.setBounds(10, 119, 314, 40);
 		login.add(user_lb);
-		user_lb.setHorizontalAlignment(SwingConstants.LEFT);
+		user_lb.setHorizontalAlignment(SwingConstants.CENTER);
 		user_lb.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		
 		JLabel password_lb = new JLabel("Contraseña:");
-		password_lb.setBounds(21, 236, 101, 39);
+		password_lb.setBounds(10, 212, 314, 39);
 		login.add(password_lb);
-		password_lb.setHorizontalAlignment(SwingConstants.LEFT);
+		password_lb.setHorizontalAlignment(SwingConstants.CENTER);
 		password_lb.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		
 		user_input = new JTextField();
-		user_input.setBounds(132, 172, 164, 39);
+		user_input.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		user_input.setBounds(10, 162, 314, 39);
 		login.add(user_input);
 		user_input.setColumns(10);
 		
-		password_input = new JPasswordField();
-		password_input.setBounds(132, 238, 164, 40);
-		login.add(password_input);
+		password_input_login = new JPasswordField();
+		password_input_login.setBorder(new MatteBorder(1, 1, 1, 0, (Color) new Color(122, 138, 153)));
+		password_input_login.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		password_input_login.setBounds(10, 248, 275, 40);
+		login.add(password_input_login);
 		
-		JButton btn_login = new JButton("Iniciar sesión");
-		btn_login.setBounds(102, 310, 135, 40);
+		btn_login = new JButton("Iniciar sesión");
+		btn_login.setBounds(104, 322, 135, 40);
 		login.add(btn_login);
 		
 		lbl_Registrarse = new JLabel("Crear una cuenta");
@@ -248,8 +345,28 @@ public class Login extends JDialog {
 		});
 		lbl_Registrarse.setForeground(Color.BLUE);
 		lbl_Registrarse.setHorizontalAlignment(SwingConstants.CENTER);
-		lbl_Registrarse.setBounds(102, 374, 135, 40);
+		lbl_Registrarse.setBounds(104, 386, 135, 40);
 		login.add(lbl_Registrarse);
+		
+		panel_ojo_login = new JPanel();
+		panel_ojo_login.setBorder(new MatteBorder(1, 0, 1, 1, (Color) new Color(122, 138, 153)));
+		panel_ojo_login.setBackground(Color.WHITE);
+		panel_ojo_login.setBounds(284, 248, 40, 40);
+		login.add(panel_ojo_login);
+		panel_ojo_login.setLayout(null);
+		
+		ojo_pass_login = new JLabel("");
+		ojo_pass_login.setHorizontalAlignment(SwingConstants.CENTER);
+		ojo_pass_login.setIcon(new ImageIcon("images/login/no_visible_16px.png"));
+		ojo_pass_login.setBounds(0, 0, 40, 40);
+		panel_ojo_login.add(ojo_pass_login);
+		
+		textField_pass_login = new JTextField();
+		textField_pass_login.setBorder(new MatteBorder(1, 1, 1, 0, (Color) new Color(122, 138, 153)));
+		textField_pass_login.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		textField_pass_login.setBounds(10, 248, 275, 40);
+		login.add(textField_pass_login);
+		textField_pass_login.setColumns(10);
 		
 		user_image = new JPanel();
 		user_image.setBackground(Color.WHITE);
