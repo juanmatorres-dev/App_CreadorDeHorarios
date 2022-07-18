@@ -65,6 +65,11 @@ public class Login extends JDialog {
 	private JPanel panel_ojo_login;
 	public JTextField textField_pass_login;
 	public JLabel ojo_pass_login;
+	public JLabel usuarioNoValido;
+	public JLabel notSamePass;
+	public JPanel panel_ojo_pass;
+	public JPanel panel_ojo_repeat_pass;
+	public JLabel pass_valida;
 
 	/**
 	 * Launch the application.
@@ -120,11 +125,32 @@ public class Login extends JDialog {
 		
 		emailNoValido = new JLabel("<=  El email no tiene un formato válido");
 		emailNoValido.setVisible(false);
-		emailNoValido.setHorizontalAlignment(SwingConstants.CENTER);
+		emailNoValido.setHorizontalAlignment(SwingConstants.LEFT);
 		emailNoValido.setForeground(Color.RED);
 		emailNoValido.setFont(new Font("Tahoma", Font.BOLD, 13));
-		emailNoValido.setBounds(0, 143, 277, 27);
+		emailNoValido.setBounds(10, 140, 277, 27);
 		internalFrame.getContentPane().add(emailNoValido);
+		
+		usuarioNoValido = new JLabel("<= El usuario debe tener entre 6 y 30 caracteres");
+		usuarioNoValido.setVisible(false);
+		usuarioNoValido.setFont(new Font("Tahoma", Font.BOLD, 13));
+		usuarioNoValido.setForeground(Color.RED);
+		usuarioNoValido.setBounds(10, 62, 345, 34);
+		internalFrame.getContentPane().add(usuarioNoValido);
+		
+		pass_valida = new JLabel("<= La contraseña debe tener entre 8 y 30 caracteres");
+		pass_valida.setVisible(false);
+		pass_valida.setFont(new Font("Tahoma", Font.BOLD, 13));
+		pass_valida.setForeground(Color.RED);
+		pass_valida.setBounds(10, 228, 400, 34);
+		internalFrame.getContentPane().add(pass_valida);
+		
+		notSamePass = new JLabel("<= Las contraseñas no coinciden");
+		notSamePass.setVisible(false);
+		notSamePass.setForeground(Color.RED);
+		notSamePass.setFont(new Font("Tahoma", Font.BOLD, 13));
+		notSamePass.setBounds(10, 228, 376, 111);
+		internalFrame.getContentPane().add(notSamePass);
 		registro.setBounds(0, 0, 350, 519);
 		contentPanel.add(registro);
 		registro.setLayout(null);
@@ -132,6 +158,14 @@ public class Login extends JDialog {
 		textField_pass_register = new JTextField();
 		textField_pass_register.setBorder(new MatteBorder(1, 1, 1, 0, (Color) new Color(122, 138, 153)));
 		textField_pass_register.setVisible(false);
+		
+		textField_repeat_pass_register = new JTextField();
+		textField_repeat_pass_register.setVisible(false);
+		textField_repeat_pass_register.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		textField_repeat_pass_register.setBorder(new MatteBorder(1, 1, 1, 0, (Color) new Color(122, 138, 153)));
+		textField_repeat_pass_register.setBounds(10, 327, 275, 40);
+		registro.add(textField_repeat_pass_register);
+		textField_repeat_pass_register.setColumns(10);
 		textField_pass_register.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		textField_pass_register.setBounds(10, 251, 275, 40);
 		registro.add(textField_pass_register);
@@ -247,7 +281,7 @@ public class Login extends JDialog {
 		lblCrearCuenta.setBounds(0, 0, 346, 50);
 		registro.add(lblCrearCuenta);
 		
-		JPanel panel_ojo_pass = new JPanel();
+		panel_ojo_pass = new JPanel();
 		panel_ojo_pass.setBorder(new MatteBorder(1, 0, 1, 1, (Color) new Color(122, 138, 153)));
 		panel_ojo_pass.setBackground(Color.WHITE);
 		panel_ojo_pass.setBounds(284, 251, 39, 40);
@@ -260,7 +294,7 @@ public class Login extends JDialog {
 		ojo_pass_register.setBounds(0, 0, 39, 40);
 		panel_ojo_pass.add(ojo_pass_register);
 		
-		JPanel panel_ojo_repeat_pass = new JPanel();
+		panel_ojo_repeat_pass = new JPanel();
 		panel_ojo_repeat_pass.setLayout(null);
 		panel_ojo_repeat_pass.setBorder(new MatteBorder(1, 0, 1, 1, (Color) new Color(122, 138, 153)));
 		panel_ojo_repeat_pass.setBackground(Color.WHITE);
@@ -272,13 +306,6 @@ public class Login extends JDialog {
 		ojo_repeat_pass_register.setHorizontalAlignment(SwingConstants.CENTER);
 		ojo_repeat_pass_register.setBounds(0, 0, 39, 40);
 		panel_ojo_repeat_pass.add(ojo_repeat_pass_register);
-		
-		textField_repeat_pass_register = new JTextField();
-		textField_repeat_pass_register.setFont(new Font("Tahoma", Font.PLAIN, 17));
-		textField_repeat_pass_register.setBorder(new MatteBorder(1, 1, 1, 0, (Color) new Color(122, 138, 153)));
-		textField_repeat_pass_register.setBounds(10, 327, 275, 40);
-		registro.add(textField_repeat_pass_register);
-		textField_repeat_pass_register.setColumns(10);
 		
 		login = new JPanel();
 		login.setBackground(Color.WHITE);

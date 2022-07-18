@@ -76,6 +76,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -3412,6 +3413,9 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		
 		boolean registroValido = false;
 		boolean todosLosCamposRellenos = false;
+		boolean usuarioValido = false;
+		boolean samePasswords = false;
+		boolean passwordValida = false;
 		
 		/**
 		 * Comprobar si los campos están completos
@@ -3450,6 +3454,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 				login.emailNoValido.setVisible(false);
 			} else {
 				login.input_email.setBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 0, 0), Color.RED));
+				login.emailNoValido.setText("<=  El email no tiene un formato válido");
 				login.internalFrame.setVisible(true);
 				try {
 					login.internalFrame.setMaximum(true);
@@ -3461,6 +3466,29 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		}
 		
 		/*
+		 * Usuario
+		 */
+		
+		if(todosLosCamposRellenos) {
+			if(login.input_nombre_de_usuario.getText().length() <= 30 && login.input_nombre_de_usuario.getText().length() >= 6) {
+				login.input_nombre_de_usuario.setBorder(new MatteBorder(1, 1, 1, 1, (Color) new Color(122, 138, 153)));
+				usuarioValido = true;
+				login.usuarioNoValido.setVisible(false);
+			}else {
+				login.input_nombre_de_usuario.setBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 0, 0), Color.RED));
+				login.usuarioNoValido.setText("<= El usuario debe tener entre 6 y 30 caracteres");
+				login.internalFrame.setVisible(true);
+				try {
+					login.internalFrame.setMaximum(true);
+				} catch (PropertyVetoException e) {
+					e.printStackTrace();
+				}
+				login.usuarioNoValido.setVisible(true);
+			}
+		}
+		
+		
+		/*
 		 * Comprobamos los campos de contraseña y sus tipo visibles
 		 */
 		
@@ -3469,12 +3497,83 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 			if(login.input_password.getText() != login.textField_pass_register.getText()) {
 				login.textField_pass_register.setText(login.input_password.getText());
 			}
+			if(login.input_repeat_password.getText() != login.textField_repeat_pass_register.getText()) {
+				login.textField_repeat_pass_register.setText(login.input_repeat_password.getText());
+			}
 		}else if(login.textField_pass_register.isVisible()) {
 			System.out.println("text visible");
 			if(login.input_password.getText() != login.textField_pass_register.getText()) {
 				login.input_password.setText(login.textField_pass_register.getText());
 			}
+			if(login.input_repeat_password.getText() != login.textField_repeat_pass_register.getText()) {
+				login.input_repeat_password.setText(login.textField_repeat_pass_register.getText());
+			}
 		}
+		
+		/*
+		 * Contraseña válida
+		 */
+		if(todosLosCamposRellenos) {
+			if(login.input_password.getText().length() <= 30 && login.input_password.getText().length() >= 8) {
+				login.input_password.setBorder(new MatteBorder(1, 1, 1, 0, (Color) new Color(122, 138, 153)));
+				login.input_repeat_password.setBorder(new MatteBorder(1, 1, 1, 0, (Color) new Color(122, 138, 153)));
+				login.panel_ojo_pass.setBorder(new MatteBorder(1, 0, 1, 1, (Color) new Color(122, 138, 153)));
+				login.panel_ojo_repeat_pass.setBorder(new MatteBorder(1, 0, 1, 1, (Color) new Color(122, 138, 153)));
+				login.textField_pass_register.setBorder(new MatteBorder(1, 1, 1, 0, (Color) new Color(122, 138, 153)));
+				login.textField_repeat_pass_register.setBorder(new MatteBorder(1, 1, 1, 0, (Color) new Color(122, 138, 153)));
+				passwordValida = true;
+				login.pass_valida.setVisible(false);
+			}else {
+				login.input_password.setBorder(new MatteBorder(2, 2, 2, 0, (Color) new Color(255, 0, 0)));
+				login.input_repeat_password.setBorder(new MatteBorder(2, 2, 2, 0, (Color) new Color(255, 0, 0)));
+				login.panel_ojo_pass.setBorder(new MatteBorder(2, 0, 2, 2, (Color) new Color(255, 0, 0)));
+				login.panel_ojo_repeat_pass.setBorder(new MatteBorder(2, 0, 2, 2, (Color) new Color(255, 0, 0)));
+				login.textField_pass_register.setBorder(new MatteBorder(2, 2, 2, 0, (Color) new Color(255, 0, 0)));
+				login.textField_repeat_pass_register.setBorder(new MatteBorder(2, 2, 2, 0, (Color) new Color(255, 0, 0)));
+				login.internalFrame.setVisible(true);
+				try {
+					login.internalFrame.setMaximum(true);
+				} catch (PropertyVetoException e) {
+					e.printStackTrace();
+				}
+				login.pass_valida.setVisible(true);
+			}
+		}
+		
+		
+		/*
+		 * Contraseñas iguales
+		 */
+		if(todosLosCamposRellenos) {
+			if(login.input_password.getText().equals(login.input_repeat_password.getText())) {
+				login.input_password.setBorder(new MatteBorder(1, 1, 1, 0, (Color) new Color(122, 138, 153)));
+				login.input_repeat_password.setBorder(new MatteBorder(1, 1, 1, 0, (Color) new Color(122, 138, 153)));
+				login.panel_ojo_pass.setBorder(new MatteBorder(1, 0, 1, 1, (Color) new Color(122, 138, 153)));
+				login.panel_ojo_repeat_pass.setBorder(new MatteBorder(1, 0, 1, 1, (Color) new Color(122, 138, 153)));
+				login.textField_pass_register.setBorder(new MatteBorder(1, 1, 1, 0, (Color) new Color(122, 138, 153)));
+				login.textField_repeat_pass_register.setBorder(new MatteBorder(1, 1, 1, 0, (Color) new Color(122, 138, 153)));
+				samePasswords = true;
+				login.notSamePass.setVisible(false);
+			}else {
+				login.input_password.setBorder(new MatteBorder(2, 2, 2, 0, (Color) new Color(255, 0, 0)));
+				login.input_repeat_password.setBorder(new MatteBorder(2, 2, 2, 0, (Color) new Color(255, 0, 0)));
+				login.panel_ojo_pass.setBorder(new MatteBorder(2, 0, 2, 2, (Color) new Color(255, 0, 0)));
+				login.panel_ojo_repeat_pass.setBorder(new MatteBorder(2, 0, 2, 2, (Color) new Color(255, 0, 0)));
+				login.textField_pass_register.setBorder(new MatteBorder(2, 2, 2, 0, (Color) new Color(255, 0, 0)));
+				login.textField_repeat_pass_register.setBorder(new MatteBorder(2, 2, 2, 0, (Color) new Color(255, 0, 0)));
+				
+				login.internalFrame.setVisible(true);
+				try {
+					login.internalFrame.setMaximum(true);
+				} catch (PropertyVetoException e) {
+					e.printStackTrace();
+				}
+				login.notSamePass.setVisible(true);
+			}
+		}
+		
+		
+		
 		
 		
 		
@@ -3496,8 +3595,10 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 											"\nimagen : " + imagen);*/
 		//System.out.print(imagen);
 		
-		if(registroValido) {
-			insertarNuevoUsuario(nombreUsuario, email, password, imagen, idioma);
+		if(registroValido && todosLosCamposRellenos && usuarioValido && samePasswords && passwordValida) {
+			if(comprobarSiExisteUsuario(login.input_nombre_de_usuario.getText()) && comprobarSiExisteEmail(login.input_email.getText())) {
+				insertarNuevoUsuario(nombreUsuario, email, password, imagen, idioma);
+			}
 		}
 	}
 	
@@ -3585,5 +3686,113 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 			}
 		}
 	}
-
+	
+	
+	/**
+	 * Comprueba si esxiste el usuario
+	 */
+	public boolean comprobarSiExisteUsuario(String usuario) {
+		boolean existe = false;
+		String usuarioEnBD = "-";
+		
+		closeConnection();
+		iniciar_Conexion_Con_Servidor();
+		try {
+			String Query = "SELECT nombre_usuario FROM usuario WHERE nombre_usuario = ? ;";
+			
+			//Statement st = conexion.createStatement();
+			//st.executeUpdate(Query);
+			
+			PreparedStatement pStmt = conexion.prepareStatement(Query);
+			pStmt.setString(1, usuario);
+			
+			
+			ResultSet rs = pStmt.executeQuery();
+			
+			while (rs.next()) {
+				System.out.println("(" + rs.getMetaData().getColumnCount() + ")");
+				System.out.println("(" + rs.getString(1) + ")");
+				usuarioEnBD = rs.getString(1);
+			}
+			pStmt.close();
+			rs.close();
+			
+		}
+		catch (Exception ex) {
+			System.out.println(ex);
+		}
+		
+		if(!usuario.equals(usuarioEnBD)){
+			System.out.println("Usuario no encontrado .");
+			existe = true;
+			login.input_nombre_de_usuario.setBorder(new MatteBorder(1, 1, 1, 1, (Color) new Color(122, 138, 153)));
+		}else {
+			login.input_nombre_de_usuario.setBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 0, 0), Color.RED));
+			login.internalFrame.setVisible(true);
+			try {
+				login.internalFrame.setMaximum(true);
+			} catch (PropertyVetoException e) {
+				e.printStackTrace();
+			}
+			
+			login.usuarioNoValido.setText("<= Este nombre de usuario ya está en uso");
+			login.usuarioNoValido.setVisible(true);
+		}
+		
+		return existe;
+	}
+	
+	/**
+	 * Comprueba si existe el email
+	 */
+	public boolean comprobarSiExisteEmail(String email) {
+		boolean existe = false;
+		String emailEnBD = "-";
+		
+		closeConnection();
+		iniciar_Conexion_Con_Servidor();
+		try {
+			String Query = "SELECT email FROM usuario WHERE email = ? ;";
+			
+			//Statement st = conexion.createStatement();
+			//st.executeUpdate(Query);
+			
+			PreparedStatement pStmt = conexion.prepareStatement(Query);
+			pStmt.setString(1, email);
+			
+			
+			ResultSet rs = pStmt.executeQuery();
+			
+			while (rs.next()) {
+				System.out.println("(" + rs.getMetaData().getColumnCount() + ")");
+				System.out.println("(" + rs.getString(1) + ")");
+				emailEnBD = rs.getString(1);
+			}
+			pStmt.close();
+			rs.close();
+			
+		}
+		catch (Exception ex) {
+			System.out.println(ex);
+		}
+		
+		if(!email.equals(emailEnBD)){
+			System.out.println("Email no encontrado .");
+			existe = true;
+			login.input_email.setBorder(new MatteBorder(1, 1, 1, 1, (Color) new Color(122, 138, 153)));
+		}else {
+			login.input_email.setBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 0, 0), Color.RED));
+			login.internalFrame.setVisible(true);
+			try {
+				login.internalFrame.setMaximum(true);
+			} catch (PropertyVetoException e) {
+				e.printStackTrace();
+			}
+			
+			login.emailNoValido.setText("<= Este email ya está en uso");
+			login.emailNoValido.setVisible(true);
+		}
+		
+		return existe;
+	}
 }
