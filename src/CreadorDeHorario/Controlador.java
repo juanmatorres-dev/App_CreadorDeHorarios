@@ -98,6 +98,8 @@ import javax.swing.table.TableColumnModel;
 
 import org.w3c.dom.events.MouseEvent;
 
+import CreadorDeHorario.libraries.BCrypt;
+
 
 
 
@@ -3584,7 +3586,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		 */
 		String nombreUsuario = login.input_nombre_de_usuario.getText();
 		String email = login.input_email.getText();
-		String password = login.input_password.getText();
+		String password = BCrypt.hashpw(login.input_password.getText(), BCrypt.gensalt(10));
 		String idioma = login.comboBox_idioma.getSelectedItem().toString();
 		String imagen = login.imagen_user.getIcon().toString();
 		
@@ -3689,7 +3691,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	
 	
 	/**
-	 * Comprueba si esxiste el usuario
+	 * Comprueba si existe el usuario
 	 */
 	public boolean comprobarSiExisteUsuario(String usuario) {
 		boolean existe = false;
