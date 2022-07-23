@@ -3499,14 +3499,21 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 			if(login.input_password.getText() != login.textField_pass_register.getText()) {
 				login.textField_pass_register.setText(login.input_password.getText());
 			}
-			if(login.input_repeat_password.getText() != login.textField_repeat_pass_register.getText()) {
-				login.textField_repeat_pass_register.setText(login.input_repeat_password.getText());
-			}
-		}else if(login.textField_pass_register.isVisible()) {
+		}
+		if(login.textField_pass_register.isVisible()) {
 			System.out.println("text visible");
 			if(login.input_password.getText() != login.textField_pass_register.getText()) {
 				login.input_password.setText(login.textField_pass_register.getText());
 			}
+		}
+		if(login.input_repeat_password.isVisible()) {
+			System.out.println("repeat pass visible");
+			if(login.input_repeat_password.getText() != login.textField_repeat_pass_register.getText()) {
+				login.textField_repeat_pass_register.setText(login.input_repeat_password.getText());
+			}
+		}
+		if(login.textField_repeat_pass_register.isVisible()) {
+			System.out.println("repeat text visible");
 			if(login.input_repeat_password.getText() != login.textField_repeat_pass_register.getText()) {
 				login.input_repeat_password.setText(login.textField_repeat_pass_register.getText());
 			}
