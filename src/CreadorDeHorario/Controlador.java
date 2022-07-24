@@ -3649,12 +3649,12 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	 * Crear el nuevo usuario en la BD
 	*/
 	public void insertarNuevoUsuario(String nombreUsuario, String email ,String password, String imagen, String idioma) {
-		
+		String noTotalRandomToken = BCrypt.hashpw("user_register", BCrypt.gensalt(10));
 		closeConnection();
 		iniciar_Conexion_Con_Servidor();
 		try {
 			String Query = "INSERT INTO usuario(nombre_usuario, email, password, imagen, idioma, numero_horarios, miembro_desde, bloqueado, token_usuario)"
-					+ " VALUES (?, ?, ? , ?, ?, 0 , now(), 0, 'user_register');";
+					+ " VALUES (?, ?, ? , ?, ?, 0 , now(), 0, ?);";
 			
 			//Statement st = conexion.createStatement();
 			//st.executeUpdate(Query);
@@ -3665,6 +3665,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 			pStmt.setString(3, password);
 			pStmt.setString(4, imagen);
 			pStmt.setString(5, idioma);
+			pStmt.setString(6, BCrypt.hashpw(noTotalRandomToken, BCrypt.gensalt(10)));
 			
 			int numUpd = pStmt.executeUpdate();
 			
