@@ -1017,12 +1017,12 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 			if(!actualizacion_necesaria) {
 				JOptionPane.showMessageDialog(null, "Tienes la última versión");
 			}
-		}else if(e.getSource().equals(login.btn_login)) {
+		}else if(e.getSource().equals(login.btn_login) && login.btn_login.isEnabled()) {
 			//JOptionPane.showMessageDialog(null, "login");
 			
 			serviceRegister.schedule(esperarAntesDeIniciarSesion, 1, TimeUnit.MILLISECONDS);
 			
-		}else if(e.getSource().equals(login.btn_Registrarse)) {
+		}else if(e.getSource().equals(login.btn_Registrarse) && login.btn_Registrarse.isEnabled()) {
 			//JOptionPane.showMessageDialog(null, "registrarse 😎");
 			
 			serviceRegister.schedule(esperarAntesDeRegistrarUsuario, 1, TimeUnit.MILLISECONDS);
@@ -3841,6 +3841,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		//JOptionPane.showMessageDialog(null, "iniciando sesión ...");
 		
 		BCrypt.hashpw("ª", BCrypt.gensalt(15)); 
+		
 		
 		/*
 		 * Detiene la carga del botón de iniciar sesión
