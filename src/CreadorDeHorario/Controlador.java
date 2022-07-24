@@ -208,6 +208,9 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	ScheduledExecutorService serviceLogin = Executors.newSingleThreadScheduledExecutor();
 	Runnable esperarAntesDeIniciarSesion = () -> iniciarSesion();
 	
+	ScheduledExecutorService serviceRegister_btn = Executors.newSingleThreadScheduledExecutor();
+	Runnable esperarAntesDeActivarBotonDeRegistro = () -> detenerCargaBotonRegistroUsuario();
+	
 	private ArrayList<String> primarasHorasDeCadaIntervaloHorario_enTexto = new ArrayList<String>();
 	private ArrayList<String> primerosMinutosDeCadaIntervaloHorario_enTexto = new ArrayList<String>();
 	
@@ -3424,6 +3427,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		/*
 		 * Comienza la carga del botón del registro de usuario
 		 */
+		login.register_loading.setIcon(new ImageIcon("images/Loading.gif"));
 		login.btn_Registrarse.setEnabled(false);
 		login.btn_Registrarse.setText("");
 		login.register_loading.setVisible(true);
@@ -3622,12 +3626,20 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		if(registroValido && todosLosCamposRellenos && usuarioValido && samePasswords && passwordValida) {
 			if(comprobarSiExisteUsuario(login.input_nombre_de_usuario.getText()) && comprobarSiExisteEmail(login.input_email.getText())) {
 				insertarNuevoUsuario(nombreUsuario, email, password, imagen, idioma);
+			}else {
+				login.register_loading.setIcon(new ImageIcon("images/no_conectado_(32x32).png"));
+				serviceRegister_btn.schedule(esperarAntesDeActivarBotonDeRegistro, 2, TimeUnit.SECONDS);
 			}
+		}else {
+			login.register_loading.setIcon(new ImageIcon("images/no_conectado_(32x32).png"));
+			serviceRegister_btn.schedule(esperarAntesDeActivarBotonDeRegistro, 2, TimeUnit.SECONDS);
 		}
-		
-		/*
-		 * Detiene la carga del botón del registro de usuario
-		 */
+	}
+	
+	/**
+	 * Detiene la carga del botón del registro de usuario
+	 */
+	public void detenerCargaBotonRegistroUsuario() {
 		login.btn_Registrarse.setEnabled(true);
 		login.btn_Registrarse.setText("Registrarse");
 		login.register_loading.setVisible(false);
@@ -3637,7 +3649,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	 * Crear el nuevo usuario en la BD
 	*/
 	public void insertarNuevoUsuario(String nombreUsuario, String email ,String password, String imagen, String idioma) {
-
+		
 		closeConnection();
 		iniciar_Conexion_Con_Servidor();
 		try {
@@ -3657,6 +3669,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 			int numUpd = pStmt.executeUpdate();
 			
 			System.out.println("Usuario creado correctamente. (" + numUpd + ")");
+			login.register_loading.setIcon(new ImageIcon("images/conectado_(32x32).png"));
 		}
 		catch (Exception ex) {
 			System.out.println(ex);
