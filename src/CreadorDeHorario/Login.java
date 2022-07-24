@@ -37,6 +37,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.UIManager;
 import javax.swing.border.MatteBorder;
 import javax.swing.JCheckBox;
+import java.awt.Rectangle;
 
 public class Login extends JDialog {
 
@@ -70,6 +71,9 @@ public class Login extends JDialog {
 	public JPanel panel_ojo_pass;
 	public JPanel panel_ojo_repeat_pass;
 	public JLabel pass_valida;
+	public JLabel register_loading;
+	public JLabel login_loading;
+	private JLabel info_login;
 
 	/**
 	 * Launch the application.
@@ -92,7 +96,7 @@ public class Login extends JDialog {
 	public Login() {
 		setModal(true);
 		setResizable(false);
-		setBounds(100, 100, 810, 569);
+		setBounds(100, 100, 810, 569); //Para construir nuevos elementos a la derecha : setBounds(100, 100, 1360, 569);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBackground(Color.WHITE);
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -161,6 +165,13 @@ public class Login extends JDialog {
 		
 		textField_repeat_pass_register = new JTextField();
 		textField_repeat_pass_register.setVisible(false);
+		
+		register_loading = new JLabel("");
+		register_loading.setVisible(false);
+		register_loading.setIcon(new ImageIcon("images/Loading.gif"));
+		register_loading.setHorizontalAlignment(SwingConstants.CENTER);
+		register_loading.setBounds(110, 469, 135, 39);
+		registro.add(register_loading);
 		textField_repeat_pass_register.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		textField_repeat_pass_register.setBorder(new MatteBorder(1, 1, 1, 0, (Color) new Color(122, 138, 153)));
 		textField_repeat_pass_register.setBounds(10, 327, 275, 40);
@@ -312,9 +323,24 @@ public class Login extends JDialog {
 		login.setBounds(0, 0, 346, 437);
 		contentPanel.add(login);
 		login.setLayout(null);
+		
+		login_loading = new JLabel("");
+		login_loading.setVisible(false);
+		
+		info_login = new JLabel("Puedes usar el nombre de usuario o el email");
+		info_login.setIcon(new ImageIcon("images/login/info_16px.png"));
+		info_login.setBounds(new Rectangle(5, 5, 0, 0));
+		info_login.setAutoscrolls(true);
+		info_login.setBackground(Color.WHITE);
+		info_login.setBounds(27, 94, 293, 30);
+		login.add(info_login);
+		login_loading.setIcon(new ImageIcon("images/Loading.gif"));
+		login_loading.setHorizontalAlignment(SwingConstants.CENTER);
+		login_loading.setBounds(104, 322, 135, 40);
+		login.add(login_loading);
 		{
 			JLabel login_1 = new JLabel("Iniciar sesión");
-			login_1.setBounds(0, 11, 346, 124);
+			login_1.setBounds(0, 11, 346, 111);
 			login.add(login_1);
 			login_1.setFont(new Font("Tahoma", Font.BOLD, 14));
 			login_1.setHorizontalAlignment(SwingConstants.CENTER);

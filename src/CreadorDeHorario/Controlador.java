@@ -202,6 +202,11 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	ScheduledExecutorService serviceUpdate = Executors.newSingleThreadScheduledExecutor();
 	Runnable esperarAntesDeActualizar = () -> prepararReinicioTrasActualizar();
 	
+	ScheduledExecutorService serviceRegister = Executors.newSingleThreadScheduledExecutor();
+	Runnable esperarAntesDeRegistrarUsuario = () -> registrarUsuario();
+	
+	ScheduledExecutorService serviceLogin = Executors.newSingleThreadScheduledExecutor();
+	Runnable esperarAntesDeIniciarSesion = () -> iniciarSesion();
 	
 	private ArrayList<String> primarasHorasDeCadaIntervaloHorario_enTexto = new ArrayList<String>();
 	private ArrayList<String> primerosMinutosDeCadaIntervaloHorario_enTexto = new ArrayList<String>();
@@ -328,7 +333,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		 * Hora
 		 */
 		
-		establecerZonaHorariaConcreta("Europe/Madrid");
+		establecerZonaHorariaConcreta("+2:00");
 		seleccionarLaBaseDeDatos();
 		
 		if(leerPantallaParaAbrir().equals("Todos los horarios")) {
@@ -1013,11 +1018,15 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 				JOptionPane.showMessageDialog(null, "Tienes la última versión");
 			}
 		}else if(e.getSource().equals(login.btn_login)) {
-			JOptionPane.showMessageDialog(null, "login");
+			//JOptionPane.showMessageDialog(null, "login");
+			
+			serviceRegister.schedule(esperarAntesDeIniciarSesion, 1, TimeUnit.MILLISECONDS);
+			
 		}else if(e.getSource().equals(login.btn_Registrarse)) {
 			//JOptionPane.showMessageDialog(null, "registrarse 😎");
 			
-			registrarUsuario();
+			serviceRegister.schedule(esperarAntesDeRegistrarUsuario, 1, TimeUnit.MILLISECONDS);
+			
 			
 			//🔥
 			
@@ -3412,6 +3421,12 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	 */
 	@SuppressWarnings("deprecation")
 	public void registrarUsuario() {
+		/*
+		 * Comienza la carga del botón del registro de usuario
+		 */
+		login.btn_Registrarse.setEnabled(false);
+		login.btn_Registrarse.setText("");
+		login.register_loading.setVisible(true);
 		
 		boolean registroValido = false;
 		boolean todosLosCamposRellenos = false;
@@ -3609,6 +3624,13 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 				insertarNuevoUsuario(nombreUsuario, email, password, imagen, idioma);
 			}
 		}
+		
+		/*
+		 * Detiene la carga del botón del registro de usuario
+		 */
+		login.btn_Registrarse.setEnabled(true);
+		login.btn_Registrarse.setText("Registrarse");
+		login.register_loading.setVisible(false);
 	}
 	
 	/**
@@ -3803,5 +3825,28 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		}
 		
 		return existe;
+	}
+	
+	/**
+	 * 
+	 */
+	public void iniciarSesion() {
+		/*
+		 * Comienza la carga del botón de iniciar sesión
+		 */
+		login.btn_login.setEnabled(false);
+		login.btn_login.setText("");
+		login.login_loading.setVisible(true);
+		
+		//JOptionPane.showMessageDialog(null, "iniciando sesión ...");
+		
+		BCrypt.hashpw("ª", BCrypt.gensalt(15)); 
+		
+		/*
+		 * Detiene la carga del botón de iniciar sesión
+		 */
+		login.btn_login.setEnabled(true);
+		login.btn_login.setText("Iniciar sesión");
+		login.login_loading.setVisible(false);
 	}
 }
