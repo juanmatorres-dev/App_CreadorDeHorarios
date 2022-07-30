@@ -211,6 +211,9 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	ScheduledExecutorService serviceRegister_btn = Executors.newSingleThreadScheduledExecutor();
 	Runnable esperarAntesDeActivarBotonDeRegistro = () -> detenerCargaBotonRegistroUsuario();
 	
+	ScheduledExecutorService serviceLogin_btn = Executors.newSingleThreadScheduledExecutor();
+	Runnable esperarAntesDeActivarBotonDeLogin = () -> detenerCargaBotonLogin();
+	
 	private ArrayList<String> primarasHorasDeCadaIntervaloHorario_enTexto = new ArrayList<String>();
 	private ArrayList<String> primerosMinutosDeCadaIntervaloHorario_enTexto = new ArrayList<String>();
 	
@@ -239,6 +242,12 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	private boolean visible_pass_register = false;
 	private boolean visible_repeat_pass_register = false;
 	private boolean visible_pass_login = false;
+	
+	/*
+	 * Constantes para realizar las operaciones del usuario logueado
+	 */
+	private static String nombreUsuario_logueado;
+	private static String tokenUsuario_logueado;
 	
 	public Controlador(Vista vista, Calendario_Horiario calendario , Configuracion configuracion , MySQL_Operations sql , BorrarFila borrarFila, Update update, Login login) {
 		
@@ -3403,11 +3412,12 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	 */
 	public void leerUsuarioLogueado() {
 		vista.nombre_usuario.setIcon(new ImageIcon(""));
-		vista.nombre_usuario.setText("juanmatorres-dev");
-		vista.nombre_usuario.setText(login.user_input.getText());
+		vista.nombre_usuario.setText(nombreUsuario_logueado);
 		//vista.nombre_usuario.setIcon(new ImageIcon("images/user/default/user_16_px.png"));
 		vista.loading_user.setVisible(false);
 		vista.menuBar_usuario.setVisible(true);
+		
+		guardarDatosDeUsuarioDespuesDeIniciarSesion();
 	}
 
 
@@ -3626,6 +3636,13 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		if(registroValido && todosLosCamposRellenos && usuarioValido && samePasswords && passwordValida) {
 			if(comprobarSiExisteUsuario(login.input_nombre_de_usuario.getText()) && comprobarSiExisteEmail(login.input_email.getText())) {
 				insertarNuevoUsuario(nombreUsuario, email, password, imagen, idioma);
+				
+				/*
+				 * Guardamos el usuario logueado
+				 */
+				nombreUsuario_logueado = nombreUsuario;
+				
+				
 			}else {
 				login.register_loading.setIcon(new ImageIcon("images/no_conectado_(32x32).png"));
 				serviceRegister_btn.schedule(esperarAntesDeActivarBotonDeRegistro, 2, TimeUnit.SECONDS);
@@ -3650,6 +3667,8 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	*/
 	public void insertarNuevoUsuario(String nombreUsuario, String email ,String password, String imagen, String idioma) {
 		String noTotalRandomToken = BCrypt.hashpw("user_register", BCrypt.gensalt(10));
+		String finalTokenGenerated = BCrypt.hashpw(noTotalRandomToken, BCrypt.gensalt(10));
+		tokenUsuario_logueado = finalTokenGenerated;
 		closeConnection();
 		iniciar_Conexion_Con_Servidor();
 		try {
@@ -3665,7 +3684,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 			pStmt.setString(3, password);
 			pStmt.setString(4, imagen);
 			pStmt.setString(5, idioma);
-			pStmt.setString(6, BCrypt.hashpw(noTotalRandomToken, BCrypt.gensalt(10)));
+			pStmt.setString(6, finalTokenGenerated);
 			
 			int numUpd = pStmt.executeUpdate();
 			
@@ -3842,26 +3861,347 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	}
 	
 	/**
+	 * Comprueba si existe el usuario en el login
+	 */
+	public boolean comprobarSiExisteUsuario_login(String usuario) {
+		boolean encontrado = false;
+		String usuarioEnBD = "-";
+		
+		closeConnection();
+		iniciar_Conexion_Con_Servidor();
+		try {
+			String Query = "SELECT nombre_usuario FROM usuario WHERE nombre_usuario = ? ;";
+			
+			//Statement st = conexion.createStatement();
+			//st.executeUpdate(Query);
+			
+			PreparedStatement pStmt = conexion.prepareStatement(Query);
+			pStmt.setString(1, usuario);
+			
+			
+			ResultSet rs = pStmt.executeQuery();
+			
+			while (rs.next()) {
+				System.out.println("(" + rs.getMetaData().getColumnCount() + ")");
+				System.out.println("(" + rs.getString(1) + ")");
+				usuarioEnBD = rs.getString(1);
+			}
+			pStmt.close();
+			rs.close();
+			
+		}
+		catch (Exception ex) {
+			System.out.println(ex);
+		}
+		
+		if(usuario.equals(usuarioEnBD)){
+			System.out.println("Usuario encontrado .");
+			login.portada_img.setIcon(new ImageIcon("images/Portada de lanzamiento Creador de horarios .png"));
+			encontrado = true;
+			//login.input_nombre_de_usuario.setBorder(new MatteBorder(1, 1, 1, 1, (Color) new Color(122, 138, 153)));
+		}else {
+			System.out.println("Usuario no encontrado .");
+			//login.input_nombre_de_usuario.setBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 0, 0), Color.RED));
+			/*
+			login.internalFrame.setVisible(true);
+			try {
+				login.internalFrame.setMaximum(true);
+			} catch (PropertyVetoException e) {
+				e.printStackTrace();
+			}*/
+			
+			
+			//login.usuarioNoValido.setText("<= Este nombre de usuario ya está en uso");
+			//login.usuarioNoValido.setVisible(true);
+		}
+		return encontrado;
+	}
+	
+	/**
+	 * Comprueba si existe el email en el login
+	 */
+	public boolean comprobarSiExisteEmail_login(String email) {
+		boolean encontrado = false;
+		String emailEnBD = "-";
+		
+		closeConnection();
+		iniciar_Conexion_Con_Servidor();
+		try {
+			String Query = "SELECT email FROM usuario WHERE email = ? ;";
+			
+			//Statement st = conexion.createStatement();
+			//st.executeUpdate(Query);
+			
+			PreparedStatement pStmt = conexion.prepareStatement(Query);
+			pStmt.setString(1, email);
+			
+			
+			ResultSet rs = pStmt.executeQuery();
+			
+			while (rs.next()) {
+				System.out.println("(" + rs.getMetaData().getColumnCount() + ")");
+				System.out.println("(" + rs.getString(1) + ")");
+				emailEnBD = rs.getString(1);
+			}
+			pStmt.close();
+			rs.close();
+			
+		}
+		catch (Exception ex) {
+			System.out.println(ex);
+		}
+		
+		if(email.equals(emailEnBD)){
+			System.out.println("Email encontrado .");
+			login.portada_img.setIcon(new ImageIcon("images/Portada de lanzamiento Creador de horarios .png"));
+			encontrado = true;
+			//login.input_email.setBorder(new MatteBorder(1, 1, 1, 1, (Color) new Color(122, 138, 153)));
+		}else {
+			/*
+			login.input_email.setBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 0, 0), Color.RED));
+			login.internalFrame.setVisible(true);
+			try {
+				login.internalFrame.setMaximum(true);
+			} catch (PropertyVetoException e) {
+				e.printStackTrace();
+			}
+			
+			login.emailNoValido.setText("<= Este email ya está en uso");
+			login.emailNoValido.setVisible(true);
+			*/
+			System.out.println("Email no encontrado .");
+			//login.portada_img.setIcon(new ImageIcon("images/login/login_falied/no_5.gif"));
+		}
+		return encontrado;
+	}
+	
+	/**
+	 * Comprueba si la contraseña del usuario al logearse
+	 */
+	public boolean comprobarPass_login_usuario(String usuario) {
+		boolean encontrado = false;
+		String pass = "-";
+		String token_usuario = "-";
+		nombreUsuario_logueado = usuario;
+		
+		closeConnection();
+		iniciar_Conexion_Con_Servidor();
+		try {
+			String Query = "SELECT password, token_usuario FROM usuario WHERE nombre_usuario = ? ;";
+			
+			//Statement st = conexion.createStatement();
+			//st.executeUpdate(Query);
+			
+			PreparedStatement pStmt = conexion.prepareStatement(Query);
+			pStmt.setString(1, usuario);
+			
+			
+			ResultSet rs = pStmt.executeQuery();
+			
+			while (rs.next()) {
+				System.out.println("(" + rs.getMetaData().getColumnCount() + ")");
+				System.out.println("(" + rs.getString(1) + ")");
+				pass = rs.getString(1);
+				token_usuario = rs.getString(2);
+			}
+			pStmt.close();
+			rs.close();
+			
+		}
+		catch (Exception ex) {
+			System.out.println(ex);
+		}
+		
+		tokenUsuario_logueado = token_usuario;
+		
+		if(BCrypt.checkpw(login.password_input_login.getText(), pass)){
+			System.out.println("Contraseña correcta .");
+			login.portada_img.setIcon(new ImageIcon("images/Portada de lanzamiento Creador de horarios .png"));
+			encontrado = true;
+			
+		}else {
+			
+			System.out.println("Contraseña incorrecta .");
+			
+		}
+		return encontrado;
+	}
+	
+	/**
+	 * Comprueba la contraseña del usuario (usando el email) al logearse
+	 */
+	public boolean comprobarPass_login_email(String email) {
+		boolean encontrado = false;
+		String pass = "-";
+		String token_usuario = "-";
+		String usuario = "-";
+		
+		
+		closeConnection();
+		iniciar_Conexion_Con_Servidor();
+		try {
+			String Query = "SELECT password, token_usuario, nombre_usuario  FROM usuario WHERE email = ? ;";
+			
+			//Statement st = conexion.createStatement();
+			//st.executeUpdate(Query);
+			
+			PreparedStatement pStmt = conexion.prepareStatement(Query);
+			pStmt.setString(1, email);
+			
+			
+			ResultSet rs = pStmt.executeQuery();
+			
+			while (rs.next()) {
+				System.out.println("(" + rs.getMetaData().getColumnCount() + ")");
+				System.out.println("(" + rs.getString(1) + ")");
+				pass = rs.getString(1);
+				token_usuario = rs.getString(2);
+				usuario = rs.getString(3);
+			}
+			pStmt.close();
+			rs.close();
+			
+		}
+		catch (Exception ex) {
+			System.out.println(ex);
+		}
+		
+		tokenUsuario_logueado = token_usuario;
+		nombreUsuario_logueado = usuario;
+		
+		if(BCrypt.checkpw(login.password_input_login.getText(), pass)){
+			System.out.println("Contraseña correcta .");
+			login.portada_img.setIcon(new ImageIcon("images/Portada de lanzamiento Creador de horarios .png"));
+			encontrado = true;
+			
+		}else {
+			
+			System.out.println("Contraseña incorrecta .");
+			
+		}
+		return encontrado;
+	}
+	
+	/**
 	 * 
 	 */
 	public void iniciarSesion() {
 		/*
 		 * Comienza la carga del botón de iniciar sesión
 		 */
+		login.login_loading.setIcon(new ImageIcon("images/Loading.gif"));
 		login.btn_login.setEnabled(false);
 		login.btn_login.setText("");
 		login.login_loading.setVisible(true);
 		
 		//JOptionPane.showMessageDialog(null, "iniciando sesión ...");
 		
-		BCrypt.hashpw("ª", BCrypt.gensalt(15)); 
+		//BCrypt.hashpw("ª", BCrypt.gensalt(15)); 
+		
+		boolean existeElUsuario = comprobarSiExisteUsuario_login(login.user_input.getText()) ;
+		boolean existeElEmail = comprobarSiExisteEmail_login(login.user_input.getText());
+		boolean passValida = false;
+		
+		if(existeElUsuario) {
+			passValida = comprobarPass_login_usuario(login.user_input.getText());
+		}else if(existeElEmail) {
+			passValida = comprobarPass_login_email(login.user_input.getText());
+		}
+		
+		if((existeElUsuario || existeElEmail) && passValida) {
+			
+			login.login_loading.setIcon(new ImageIcon("images/conectado_(32x32).png"));
+			
+		}else {
+			login.login_loading.setIcon(new ImageIcon("images/no_conectado_(32x32).png"));
+			login.portada_img.setIcon(new ImageIcon("images/login/login_falied/no_5.gif"));
+			serviceLogin_btn.schedule(esperarAntesDeActivarBotonDeLogin, 3, TimeUnit.SECONDS);
+		}
 		
 		
+		
+	}
+	
+	public void detenerCargaBotonLogin() {
 		/*
 		 * Detiene la carga del botón de iniciar sesión
 		 */
 		login.btn_login.setEnabled(true);
 		login.btn_login.setText("Iniciar sesión");
 		login.login_loading.setVisible(false);
+		login.portada_img.setIcon(new ImageIcon("images/Portada de lanzamiento Creador de horarios .png"));
+	}
+	
+	
+	/**
+	 * Guarda los datos después de iniciar sesión
+	 */
+	public void guardarDatosDeUsuarioDespuesDeIniciarSesion() {
+		
+		/*
+		 * Crea el directorio para guardar los datos del usuario logeado
+		 */
+		File directory = new File("logged_user");
+		if(!directory.exists()) {
+			directory.mkdir();
+		}
+		
+		/*
+		 * Ecribe el fichero con el nombre de usuario
+		 */
+		
+		File ficheroSalida = new File("logged_user/nombre_usuario.txt");
+		
+		try {
+			FileWriter escrituraFichero = new FileWriter(ficheroSalida);
+			PrintWriter pw = new PrintWriter(escrituraFichero);
+			
+			pw.print(nombreUsuario_logueado);
+			
+			escrituraFichero.close();
+			pw.close();
+			
+//			JOptionPane.showMessageDialog(null, "nombre de usuario logeado guardado ");
+
+			
+		} catch (IOException e2) {
+			e2.printStackTrace();
+			
+			StringWriter error = new StringWriter();
+			e2.printStackTrace(new PrintWriter(error));
+			
+			
+			JOptionPane.showMessageDialog(vista.ventana_principal, error.toString() , "Se ha producido un error :(" , JOptionPane.ERROR_MESSAGE);
+		}
+		
+		/*
+		 * Ecribe el fichero con el token de usuario
+		 */
+		
+		File ficheroSalida_token_usuario = new File("logged_user/token_usuario.txt");
+		
+		try {
+			FileWriter escrituraFichero = new FileWriter(ficheroSalida_token_usuario);
+			PrintWriter pw = new PrintWriter(escrituraFichero);
+			
+			pw.print(tokenUsuario_logueado);
+			
+			escrituraFichero.close();
+			pw.close();
+			
+//			JOptionPane.showMessageDialog(null, "token de usuario logeado guardado ");
+
+			
+		} catch (IOException e2) {
+			e2.printStackTrace();
+			
+			StringWriter error = new StringWriter();
+			e2.printStackTrace(new PrintWriter(error));
+			
+			
+			JOptionPane.showMessageDialog(vista.ventana_principal, error.toString() , "Se ha producido un error :(" , JOptionPane.ERROR_MESSAGE);
+		}
+		
+		
 	}
 }

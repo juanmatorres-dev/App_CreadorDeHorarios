@@ -74,6 +74,7 @@ public class Login extends JDialog {
 	public JLabel register_loading;
 	public JLabel login_loading;
 	private JLabel info_login;
+	public JLabel portada_img;
 
 	/**
 	 * Launch the application.
@@ -510,11 +511,11 @@ public class Login extends JDialog {
 		contentPanel.add(btns);
 		btns.setLayout(null);
 		{
-			JLabel img = new JLabel("");
-			img.setBounds(347, 0, 447, 500);
-			img.setBackground(new Color(230, 230, 250));
-			img.setIcon(new ImageIcon("images/Portada de lanzamiento Creador de horarios .png"));
-			contentPanel.add(img);
+			portada_img = new JLabel("");
+			portada_img.setBounds(347, 0, 447, 500);
+			portada_img.setBackground(new Color(230, 230, 250));
+			portada_img.setIcon(new ImageIcon("images/Portada de lanzamiento Creador de horarios .png"));
+			contentPanel.add(portada_img);
 		}
 	}
 }
