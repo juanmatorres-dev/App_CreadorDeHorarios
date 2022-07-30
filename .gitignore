@@ -6,3 +6,5 @@ download/Creador.De.Horarios_installer_v.7.9.9_beta.exe
 [Creador de horarios - Micro Dato].txt
 [Creador de horarios - Mini Datos].txt
 *.exe
+logged_user/token_usuario.txt
+logged_user/nombre_usuario.txt
