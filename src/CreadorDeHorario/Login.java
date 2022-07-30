@@ -416,6 +416,7 @@ public class Login extends JDialog {
 		panel_ojo_login.add(ojo_pass_login);
 		
 		textField_pass_login = new JTextField();
+		textField_pass_login.setVisible(false);
 		textField_pass_login.setBorder(new MatteBorder(1, 1, 1, 0, (Color) new Color(122, 138, 153)));
 		textField_pass_login.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		textField_pass_login.setBounds(10, 248, 275, 40);

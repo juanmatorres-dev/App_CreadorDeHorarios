@@ -4098,6 +4098,23 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		
 		//BCrypt.hashpw("ª", BCrypt.gensalt(15)); 
 		
+		/*
+		 * Comprobamos los campos de contraseña y sus tipo visibles
+		 */
+		
+		if(login.password_input_login.isVisible()) {
+			System.out.println("pass visible login");
+			if(login.password_input_login.getText() != login.textField_pass_login.getText()) {
+				login.textField_pass_login.setText(login.password_input_login.getText());
+			}
+		}
+		if(login.textField_pass_login.isVisible()) {
+			System.out.println("text visible login");
+			if(login.password_input_login.getText() != login.textField_pass_login.getText()) {
+				login.password_input_login.setText(login.textField_pass_login.getText());
+			}
+		}
+		
 		boolean existeElUsuario = comprobarSiExisteUsuario_login(login.user_input.getText()) ;
 		boolean existeElEmail = comprobarSiExisteEmail_login(login.user_input.getText());
 		boolean passValida = false;
