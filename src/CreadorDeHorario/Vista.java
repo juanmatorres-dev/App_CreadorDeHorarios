@@ -110,7 +110,7 @@ public class Vista {
 	 */
 	public Vista() {
 		initialize();
-		ventana_principal.setVisible(true);
+		ventana_principal.setVisible(false);
 
 	}
 
@@ -298,6 +298,26 @@ public class Vista {
 		lbl_loading_bloquear.setIcon(new ImageIcon("images/Animated_loading_half-circle_(16x16).gif"));
 		lbl_loading_bloquear.setBounds(818, 60, 25, 25);
 		panel_botones_inferiores.add(lbl_loading_bloquear);
+		
+		JLabel lblNewLabel = new JLabel("");
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel.setIcon(new ImageIcon("images/Animated_loading_half-circle_(16x16).gif"));
+		lblNewLabel.setBounds(869, 52, 98, 36);
+		panel_botones_inferiores.add(lblNewLabel);
+		
+		JLabel donate = new JLabel("");
+		donate.setIcon(new ImageIcon("images/main_window/coffee-cup_32_px.png"));
+		donate.setHorizontalAlignment(SwingConstants.CENTER);
+		donate.setBounds(31, 46, 46, 46);
+		panel_botones_inferiores.add(donate);
+		donate.setBorder(BorderFactory.createRaisedBevelBorder());
+		
+		JLabel bug = new JLabel("");
+		bug.setIcon(new ImageIcon("images/main_window/bug_32_px.png"));
+		bug.setHorizontalAlignment(SwingConstants.CENTER);
+		bug.setBorder(BorderFactory.createRaisedBevelBorder());
+		bug.setBounds(87, 46, 46, 46);
+		panel_botones_inferiores.add(bug);
 		
 		scrollPane = new JScrollPane();
 		scrollPane.setBounds(30, 63, 954, 560);

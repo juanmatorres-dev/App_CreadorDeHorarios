@@ -38,6 +38,8 @@ import javax.swing.UIManager;
 import javax.swing.border.MatteBorder;
 import javax.swing.JCheckBox;
 import java.awt.Rectangle;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class Login extends JDialog {
 
@@ -95,6 +97,7 @@ public class Login extends JDialog {
 	 * Create the dialog.
 	 */
 	public Login() {
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setModal(true);
 		setResizable(false);
 		setBounds(100, 100, 810, 569); //Para construir nuevos elementos a la derecha : setBounds(100, 100, 1360, 569);

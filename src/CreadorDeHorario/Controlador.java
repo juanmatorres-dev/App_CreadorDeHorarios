@@ -214,6 +214,9 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	ScheduledExecutorService serviceLogin_btn = Executors.newSingleThreadScheduledExecutor();
 	Runnable esperarAntesDeActivarBotonDeLogin = () -> detenerCargaBotonLogin();
 	
+	ScheduledExecutorService serviceCloseLogin = Executors.newSingleThreadScheduledExecutor();
+	Runnable esperarAntesDeCerrarVentanaDeLogin = () -> loginCorrecto();
+	
 	private ArrayList<String> primarasHorasDeCadaIntervaloHorario_enTexto = new ArrayList<String>();
 	private ArrayList<String> primerosMinutosDeCadaIntervaloHorario_enTexto = new ArrayList<String>();
 	
@@ -298,6 +301,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		update.update_button.addMouseListener(this);
 		update.reiniciar_y_actualizar.addMouseListener(this);
 		
+		login.addWindowListener(this);
 		login.btn_Registrarse.addMouseListener(this);
 		login.btn_login.addMouseListener(this);
 		login.ojo_pass_register.addMouseListener(this);
@@ -307,6 +311,8 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		login.lanzarVentana();
 		login.setLocationRelativeTo(vista.ventana_principal); // antes de hacer visible la ventana hay que centrarla
 		login.setVisible(true);
+		
+		
 		
 		//loginController.mostrarLogin();
 		
@@ -1223,7 +1229,6 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 
 	@Override
 	public void windowClosed(WindowEvent e) {
-		// TODO Auto-generated method stub
 	}
 
 
@@ -1232,10 +1237,14 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		
 		quitarDiasDelMesAnteriorYSiguiente();
 		
+		
+		
 		if(e.getSource().equals(vista.ventana_principal)) {
 			closeConnection();
 		}else if(e.getSource().equals(configuracion)) {
 			configurarTipoDeBarra();	
+		}else if(e.getSource().equals(login)) {
+			System.exit(0);
 		}
 		
 		
@@ -3642,6 +3651,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 				 */
 				nombreUsuario_logueado = nombreUsuario;
 				
+				serviceCloseLogin.schedule(esperarAntesDeCerrarVentanaDeLogin, 1500, TimeUnit.MILLISECONDS);
 				
 			}else {
 				login.register_loading.setIcon(new ImageIcon("images/no_conectado_(32x32).png"));
@@ -4128,12 +4138,15 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		if((existeElUsuario || existeElEmail) && passValida) {
 			
 			login.login_loading.setIcon(new ImageIcon("images/conectado_(32x32).png"));
-			
+			//login.setVisible(false);
+			//login.dispose();
+			serviceCloseLogin.schedule(esperarAntesDeCerrarVentanaDeLogin, 1500, TimeUnit.MILLISECONDS);
 		}else {
 			login.login_loading.setIcon(new ImageIcon("images/no_conectado_(32x32).png"));
 			login.portada_img.setIcon(new ImageIcon("images/login/login_falied/no_5.gif"));
 			serviceLogin_btn.schedule(esperarAntesDeActivarBotonDeLogin, 3, TimeUnit.SECONDS);
 		}
+		
 		
 		
 		
@@ -4220,5 +4233,14 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		}
 		
 		
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void loginCorrecto() {
+		login.dispose();
+		vista.ventana_principal.setVisible(true);
 	}
 }
