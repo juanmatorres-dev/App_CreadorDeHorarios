@@ -25,7 +25,8 @@ public class App {
 		MySQL_Operations sql = new MySQL_Operations();
 		Update update = new Update();
 		Login login = new Login();
-		Controlador controlador = new Controlador(vista , calendario , configuracion , sql, borrarFila, update, login);
+		AutoLogin autoLogin = new AutoLogin(); 
+		Controlador controlador = new Controlador(vista , calendario , configuracion , sql, borrarFila, update, login, autoLogin);
 		
 		
 	}

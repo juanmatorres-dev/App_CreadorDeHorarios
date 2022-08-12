@@ -132,6 +132,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	private MySQL_Operations sql;
 	private Update update;
 	private Login login;
+	private AutoLogin autoLogin;
 	
 	private int mesActual; // Guardan el mes y año actuales al abrir el Calendario
 	private int anioActual;
@@ -252,8 +253,9 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	private static String nombreUsuario_logueado;
 	private static String tokenUsuario_logueado;
 	
-	public Controlador(Vista vista, Calendario_Horiario calendario , Configuracion configuracion , MySQL_Operations sql , BorrarFila borrarFila, Update update, Login login) {
-		
+	public Controlador(Vista vista, Calendario_Horiario calendario , Configuracion configuracion , MySQL_Operations sql , BorrarFila borrarFila, Update update, Login login, AutoLogin autoLogin) {
+		leerSesionDeUsuarioLogueado();
+		//JOptionPane.showMessageDialog(null, nombreUsuario_logueado + "\n" + tokenUsuario_logueado);
 		diasDeLaSemana.add("Lunes");
 		diasDeLaSemana.add("Martes");
 		diasDeLaSemana.add("Miércoles");
@@ -268,6 +270,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		this.sql = sql;
 		this.update = update;
 		this.login = login;
+		this.autoLogin = autoLogin;
 		
 		vista.ventana_principal.addWindowListener(this);
 		
@@ -308,9 +311,13 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		login.ojo_repeat_pass_register.addMouseListener(this);
 		login.ojo_pass_login.addMouseListener(this);
 		
-		login.lanzarVentana();
-		login.setLocationRelativeTo(vista.ventana_principal); // antes de hacer visible la ventana hay que centrarla
-		login.setVisible(true);
+		if(!autoLogin()) {
+			autoLogin.dispose();
+			login.lanzarVentana();
+			login.setLocationRelativeTo(vista.ventana_principal); // antes de hacer visible la ventana hay que centrarla
+			login.setVisible(true);
+		}
+		
 		
 		
 		
@@ -489,6 +496,8 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		readFileFromUrlAndCheckUpdate();
 		
 		leerUsuarioLogueado();
+		
+		//JOptionPane.showMessageDialog(null, nombreUsuario_logueado + "\n" + tokenUsuario_logueado);
 	}
 	
 
@@ -3433,7 +3442,8 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource().equals(vista.cerrar_sesion)) {
-			JOptionPane.showMessageDialog(null, "Cerrar sesión");
+			//JOptionPane.showMessageDialog(null, "Cerrar sesión");
+			cerrarSesion();
 		}
 		
 	}
@@ -4242,5 +4252,246 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	public void loginCorrecto() {
 		login.dispose();
 		vista.ventana_principal.setVisible(true);
+		autoLogin.dispose();
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public void leerSesionDeUsuarioLogueado() {
+		/*
+		 * Lee el nombre_usuario 
+		 */
+		
+		String nombre_usuario_local_stored = "?";
+		
+		Scanner lectorFichero;
+		
+		File ficheroSalida = new File("logged_user/nombre_usuario.txt");
+		
+		
+		try {
+			lectorFichero = new Scanner(ficheroSalida);
+			
+			while (lectorFichero.hasNext()) {
+//				System.out.println(lectorFichero.nextLine());
+				nombre_usuario_local_stored = lectorFichero.nextLine();
+			}
+			
+			lectorFichero.close();
+			nombreUsuario_logueado = nombre_usuario_local_stored;
+		} catch (Exception e) {
+			
+			
+			e.printStackTrace();
+			
+			StringWriter error = new StringWriter();
+			e.printStackTrace(new PrintWriter(error));
+			
+			
+			//JOptionPane.showMessageDialog(null,"No se ha encontrado el archivo de configuración , se creará automáticamente con la configuración por defecto" + "\r\n" + "\r\n" + "\r\n" + error.toString()  , "Se ha producido un error :(" , JOptionPane.ERROR_MESSAGE);
+			
+		}
+		
+		
+		/*
+		 * Lee el tokenUsuario_logueado 
+		 */
+		
+		String tokenUsuario_logueado_local_stored = "?";
+		
+		Scanner lectorFichero_token;
+		
+		File ficheroSalida_token = new File("logged_user/token_usuario.txt");
+		
+		
+		try {
+			lectorFichero_token = new Scanner(ficheroSalida_token);
+			
+			while (lectorFichero_token.hasNext()) {
+//				System.out.println(lectorFichero.nextLine());
+				tokenUsuario_logueado_local_stored = lectorFichero_token.nextLine();
+			}
+			
+			lectorFichero_token.close();
+			tokenUsuario_logueado = tokenUsuario_logueado_local_stored;
+		} catch (Exception e) {
+			
+			
+			e.printStackTrace();
+			
+			StringWriter error = new StringWriter();
+			e.printStackTrace(new PrintWriter(error));
+			
+			
+			//JOptionPane.showMessageDialog(null,"No se ha encontrado el archivo de configuración , se creará automáticamente con la configuración por defecto" + "\r\n" + "\r\n" + "\r\n" + error.toString()  , "Se ha producido un error :(" , JOptionPane.ERROR_MESSAGE);
+			
+		}
+		
+		
+	}
+	
+	/**
+	 * Inicia sesión automáticamente usando la sesión de usuario guardada
+	 */
+	public boolean autoLogin() {
+		autoLogin.lanzarVentana();
+		autoLogin.setLocationRelativeTo(null);
+		autoLogin.setVisible(true);
+		
+		boolean valido = false;
+		
+		/*
+		 * Comienza la carga del botón de iniciar sesión
+		 */
+		/*
+		login.login_loading.setIcon(new ImageIcon("images/Loading.gif"));
+		login.btn_login.setEnabled(false);
+		login.btn_login.setText("");
+		login.login_loading.setVisible(true);
+		*/
+		
+		boolean existeElUsuario = comprobarSiExisteUsuario_login(nombreUsuario_logueado) ;
+		boolean tokenValido = false;
+		
+		if(existeElUsuario) {
+			tokenValido = comprobarSiExisteToken_Usuario_login(nombreUsuario_logueado, tokenUsuario_logueado);
+		}
+		
+		if(existeElUsuario && tokenValido) {
+			login.login_loading.setIcon(new ImageIcon("images/conectado_(32x32).png"));
+			serviceCloseLogin.schedule(esperarAntesDeCerrarVentanaDeLogin, 1500, TimeUnit.MILLISECONDS);
+			valido = true;
+		}else {
+			/*
+			login.login_loading.setIcon(new ImageIcon("images/no_conectado_(32x32).png"));
+			login.portada_img.setIcon(new ImageIcon("images/login/login_falied/no_5.gif"));
+			serviceLogin_btn.schedule(esperarAntesDeActivarBotonDeLogin, 3, TimeUnit.SECONDS);
+			*/
+		}
+		
+		return valido;
+	}
+	
+	
+	/**
+	 * Comprueba si existe el token de usuario en el login
+	 */
+	public boolean comprobarSiExisteToken_Usuario_login(String usuario, String token_usuario) {
+		boolean encontrado = false;
+		String token_usuarioEnBD = "-";
+		
+		closeConnection();
+		iniciar_Conexion_Con_Servidor();
+		try {
+			String Query = "SELECT token_usuario FROM usuario WHERE nombre_usuario = ? ;";
+			
+			//Statement st = conexion.createStatement();
+			//st.executeUpdate(Query);
+			
+			PreparedStatement pStmt = conexion.prepareStatement(Query);
+			pStmt.setString(1, usuario);
+			
+			
+			ResultSet rs = pStmt.executeQuery();
+			
+			while (rs.next()) {
+				System.out.println("(" + rs.getMetaData().getColumnCount() + ")");
+				System.out.println("(" + rs.getString(1) + ")");
+				token_usuarioEnBD = rs.getString(1);
+			}
+			pStmt.close();
+			rs.close();
+			
+		}
+		catch (Exception ex) {
+			System.out.println(ex);
+		}
+		
+		if(token_usuario.equals(token_usuarioEnBD)){
+			System.out.println("Token de usuario encontrado .");
+			login.portada_img.setIcon(new ImageIcon("images/Portada de lanzamiento Creador de horarios .png"));
+			encontrado = true;
+		}else {
+			System.out.println("Token de usuario no encontrado .");
+		}
+		return encontrado;
+	}
+	
+	/**
+	 * Cierra la sesión borrando el nombre de usuario y su token guardado
+	 */
+	public void cerrarSesion() {
+		
+		/*
+		 * Crea el directorio para guardar los datos del usuario logeado
+		 */
+		File directory = new File("logged_user");
+		if(!directory.exists()) {
+			directory.mkdir();
+		}
+		
+		/*
+		 * Ecribe el fichero con el nombre de usuario
+		 */
+		
+		File ficheroSalida = new File("logged_user/nombre_usuario.txt");
+		
+		try {
+			FileWriter escrituraFichero = new FileWriter(ficheroSalida);
+			PrintWriter pw = new PrintWriter(escrituraFichero);
+			
+			pw.print("");
+			
+			escrituraFichero.close();
+			pw.close();
+			
+//			JOptionPane.showMessageDialog(null, "nombre de usuario logeado guardado ");
+
+			
+		} catch (IOException e2) {
+			e2.printStackTrace();
+			
+			StringWriter error = new StringWriter();
+			e2.printStackTrace(new PrintWriter(error));
+			
+			
+			JOptionPane.showMessageDialog(vista.ventana_principal, error.toString() , "Se ha producido un error :(" , JOptionPane.ERROR_MESSAGE);
+		}
+		
+		/*
+		 * Ecribe el fichero con el token de usuario
+		 */
+		
+		File ficheroSalida_token_usuario = new File("logged_user/token_usuario.txt");
+		
+		try {
+			FileWriter escrituraFichero = new FileWriter(ficheroSalida_token_usuario);
+			PrintWriter pw = new PrintWriter(escrituraFichero);
+			
+			pw.print("");
+			
+			escrituraFichero.close();
+			pw.close();
+			
+//			JOptionPane.showMessageDialog(null, "token de usuario logeado guardado ");
+
+			
+		} catch (IOException e2) {
+			e2.printStackTrace();
+			
+			StringWriter error = new StringWriter();
+			e2.printStackTrace(new PrintWriter(error));
+			
+			
+			JOptionPane.showMessageDialog(vista.ventana_principal, error.toString() , "Se ha producido un error :(" , JOptionPane.ERROR_MESSAGE);
+		}
+		
+		try {
+			restartApplication(null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
