@@ -252,6 +252,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	 */
 	private static String nombreUsuario_logueado;
 	private static String tokenUsuario_logueado;
+	private static int idUsuario_logueado;
 	
 	public Controlador(Vista vista, Calendario_Horiario calendario , Configuracion configuracion , MySQL_Operations sql , BorrarFila borrarFila, Update update, Login login, AutoLogin autoLogin) {
 		leerSesionDeUsuarioLogueado();
@@ -1577,18 +1578,22 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	 */
 	public void insertData_btn_insertarFila_deHorario() {
 		
+		//JOptionPane.showMessageDialog(null, nombreUsuario_logueado);
+		getUserId();
+		closeConnection();
+		iniciar_Conexion_Con_Servidor();
 		try {
-			String Query = "INSERT INTO horario(nombre_horario , fecha_de_creacion , fecha_de_modificacion) VALUES('' , NOW() , NOW());";
+			String Query = "INSERT INTO horario(nombre_horario , fecha_de_creacion , fecha_de_modificacion, id_usuario_owner) VALUES('' , NOW() , NOW(), ?);";
 			
-			Statement st = conexion.createStatement();
-			st.executeUpdate(Query);
+			PreparedStatement pStmt = conexion.prepareStatement(Query);
+			pStmt.setInt(1, idUsuario_logueado);
 			
-			
-			
-			
+			pStmt.executeUpdate();
+			pStmt.close();
 			System.out.println("Datos almacenados correctamente.");
 		}
 		catch (Exception ex) {
+			System.out.println(ex);
 			System.out.println("Error guardando datos.");
 		}
 		
@@ -4492,6 +4497,39 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 			restartApplication(null);
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void getUserId() {
+		closeConnection();
+		iniciar_Conexion_Con_Servidor();
+		try {
+			String Query = "SELECT id FROM usuario WHERE nombre_usuario = ? ;";
+			
+			//Statement st = conexion.createStatement();
+			//st.executeUpdate(Query);
+			
+			PreparedStatement pStmt = conexion.prepareStatement(Query);
+			pStmt.setString(1, nombreUsuario_logueado);
+			
+			
+			ResultSet rs = pStmt.executeQuery();
+			
+			while (rs.next()) {
+				System.out.println("(" + rs.getMetaData().getColumnCount() + ")");
+				System.out.println("(" + rs.getString(1) + ")");
+				idUsuario_logueado = Integer.parseInt(rs.getString(1));
+			}
+			pStmt.close();
+			rs.close();
+			
+		}
+		catch (Exception ex) {
+			System.out.println(ex);
 		}
 	}
 }
