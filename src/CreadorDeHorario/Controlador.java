@@ -380,7 +380,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 			vista.lbl_loading_bloquear.setVisible(false);
 			
 		}else if(leerPantallaParaAbrir().equals("Un horario")) {
-			
+			comprobarPermisoDeAccesoAlHorarioActual(Integer.valueOf(leerHorarioParaAbrir()));
 		
 			hacerConsultaDeIntervalosHorariosDeUnHorarioConcreto(Integer.valueOf(leerHorarioParaAbrir())); 
 			
@@ -497,6 +497,8 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		readFileFromUrlAndCheckUpdate();
 		
 		leerUsuarioLogueado();
+		
+		//comprobarPermisoDeAccesoAlHorarioActual(Integer.valueOf(leerHorarioParaAbrir()));
 		
 		//JOptionPane.showMessageDialog(null, nombreUsuario_logueado + "\n" + tokenUsuario_logueado);
 	}
@@ -4534,6 +4536,60 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		}
 		catch (Exception ex) {
 			System.out.println(ex);
+		}
+	}
+	
+	
+	/**
+	 * 
+	 */
+	private void comprobarPermisoDeAccesoAlHorarioActual(int id_horario) {
+		leerUsuarioLogueado();
+		getUserId();
+		closeConnection();
+		iniciar_Conexion_Con_Servidor();
+		boolean permisoDeAcceso = true;
+		
+		try {
+			String Query = "select id_usuario_owner from horario where id = ?;";
+			
+			//Statement st = conexion.createStatement();
+			//st.executeUpdate(Query);
+			
+			PreparedStatement pStmt = conexion.prepareStatement(Query);
+			pStmt.setInt(1, id_horario);
+			
+			
+			ResultSet rs = pStmt.executeQuery();
+			
+			while (rs.next()) {
+				System.out.println("(" + rs.getMetaData().getColumnCount() + ")");
+				System.out.println("(" + rs.getString(1) + ")");
+				if(idUsuario_logueado != Integer.parseInt(rs.getString(1))) {
+					permisoDeAcceso = false;
+				}
+			}
+			pStmt.close();
+			rs.close();
+			
+		}
+		catch (Exception ex) {
+			System.out.println(ex);
+		}
+		
+		if(!permisoDeAcceso) {
+			
+			JOptionPane.showMessageDialog(vista.ventana_principal, "Acceso denegado \n\nNo tienes permisos para acceder a este horario, se volverá a la pantalla principal", "Advertencia", JOptionPane.ERROR_MESSAGE);
+			
+			/*
+			 *  home
+			 */
+			guardarLaProximaPantallaQueSeAbre("Todos los horarios");
+			try {
+				restartApplication(null);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 }
