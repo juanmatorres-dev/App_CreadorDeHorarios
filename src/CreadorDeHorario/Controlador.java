@@ -1776,7 +1776,8 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		try {
 			String Query = "SELECT id\r\n" + 
 					"FROM horario"
-					+ " WHERE horario.borrado = false;";
+					+ " WHERE horario.borrado = false "
+					+ "and id_usuario_owner = " + idUsuario_logueado + ";";
 
 
 			Statement st = conexion.createStatement();
@@ -1867,7 +1868,8 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		try {
 			String Query = "SELECT nombre_horario\r\n" + 
 					"FROM horario"
-					+ " WHERE horario.borrado = false;";
+					+ " WHERE horario.borrado = false"
+					+ " and id_usuario_owner = " + idUsuario_logueado + ";";
 
 			Statement st = conexion.createStatement();
 			
@@ -2809,13 +2811,15 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	 * 
 	 */
 	public void hacerConsultaDeHorarios() {
+		getUserId();
+		//JOptionPane.showMessageDialog(null, idUsuario_logueado);
 		consultarHorarios("\r\n" + 
 				"SELECT \r\n" + 
 				"	nombre_horario , \r\n" + 
 				"	DATE_FORMAT(fecha_de_creacion , '%d/%m/%Y , %H:%i') AS fecha_de_creacion, \r\n" + 
 				"    DATE_FORMAT(fecha_de_modificacion , '%d/%m/%Y , %H:%i') AS fecha_de_modificacion\r\n" + 
 				"FROM horario "
-				+ " WHERE horario.borrado = false;\r\n" + 
+				+ " WHERE horario.borrado = false and id_usuario_owner = " + idUsuario_logueado + ";\r\n" + 
 				"", true);
 	}
 	
