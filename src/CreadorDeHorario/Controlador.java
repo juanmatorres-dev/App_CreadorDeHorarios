@@ -291,7 +291,6 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		configuracion.addKeyListener(this);
 		configuracion.test_notificaciones.addMouseListener(this);
 		configuracion.comboBox_tipoDeBarra.addMouseListener(this);
-		configuracion.btnBorraBD_yReconstruir.addMouseListener(this);
 		configuracion.btn_check_update.addMouseListener(this);
 		
 		vista.table.addMouseListener(this);
@@ -965,23 +964,6 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-		}else if(e.getSource().equals(configuracion.btnBorraBD_yReconstruir)) {
-			String[] botones = {"Sí , sé lo que hago", "No, sácame de aquí !"};
-//			Icon icono = new ImageIcon(getClass().getResource("images/advertencia_(32x32).png"));
-			int ventana = JOptionPane.showOptionDialog(null, 
-							"¿ Estás seguro de que quieres hacer esto , esta opción sirve si no tenías la base de datos o esta está dañada o si quieres borrarla ( se borrarán todos los datos ) ?", 
-							"Advertencia", 
-							JOptionPane.DEFAULT_OPTION, 
-							JOptionPane.WARNING_MESSAGE, new ImageIcon("images/advertencia_(32x32).png") ,
-							botones ,
-							botones[1]);
-			if(ventana == 0) {
-				if(laConexionHaFallado) {
-					iniciar_Conexion_Con_Servidor_Si_La_BD_No_Existe();
-				}
-				borrar_y_reconstruir_BD();
-			}
-			
 		}else if(e.getSource().equals(vista.lbl_imprimir)) {
 //			JOptionPane.showMessageDialog(null, "Imprimir");
 			
@@ -1073,26 +1055,11 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 
 
 	@Override
-	public void mouseEntered(java.awt.event.MouseEvent e) {
-		// TODO Auto-generated method stub
-		if(e.getSource().equals(configuracion.btnBorraBD_yReconstruir)) {
-//			JOptionPane.showMessageDialog(null, "Detelete ❗❗❗❗❗");
-			configuracion.lbl_Montapuercos_Clash_Royale_izq.setVisible(true);
-			configuracion.lbl_Montapuercos_Clash_Royale_derch.setVisible(true);
-		}
-		
-	}
+	public void mouseEntered(java.awt.event.MouseEvent e) {}
 
 
 	@Override
-	public void mouseExited(java.awt.event.MouseEvent e) {
-		// TODO Auto-generated method stub
-		if(e.getSource().equals(configuracion.btnBorraBD_yReconstruir)) {
-//			JOptionPane.showMessageDialog(null, "Detelete ❗❗❗❗❗");
-			configuracion.lbl_Montapuercos_Clash_Royale_izq.setVisible(false);
-			configuracion.lbl_Montapuercos_Clash_Royale_derch.setVisible(false);
-		}
-	}
+	public void mouseExited(java.awt.event.MouseEvent e) {}
 
 
 	@Override
@@ -1957,69 +1924,6 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		}
 		
 	}
-	
-	
-	/*
-	 * 
-	 */
-	private void borrar_y_reconstruir_BD() {
-		try {
-			String Query = "DROP DATABASE IF EXISTS creadorDe_horarios_dataBase;";
-			Statement st = conexion.createStatement();
-			st.executeUpdate(Query);
-			
-			String Query2 = "CREATE DATABASE creadorDe_horarios_dataBase CHARACTER SET utf8mb4;";
-			st.executeUpdate(Query2);
-			
-			String Query3 = "USE " + BD + ";";
-			st.executeUpdate(Query3);
-			
-			String Query4 = "CREATE TABLE horario (\r\n" + 
-					"	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY ,\r\n" + 
-					"    nombre_horario VARCHAR(100) NOT NULL ,\r\n" + 
-					"    fecha_de_creacion DATETIME NOT NULL ,\r\n" + 
-					"    fecha_de_modificacion DATETIME NOT NULL ,\r\n" + 
-					"    borrado BOOLEAN DEFAULT FALSE\r\n" + 
-					");";
-			st.executeUpdate(Query4);
-			
-			String Query5 = "CREATE TABLE intervalo_hora (\r\n" + 
-					"	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY ,\r\n" + 
-					"    hora_inicio TIME NOT NULL ,\r\n" + 
-					"    hora_fin TIME NOT NULL ,\r\n" + 
-					"	id_horario INT UNSIGNED ,\r\n" + 
-					"    FOREIGN KEY (id_horario) REFERENCES horario(id)  \r\n" + 
-					");";
-			st.executeUpdate(Query5);
-			
-			String Query6 = "CREATE TABLE asignatura (\r\n" + 
-					"	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY ,\r\n" + 
-					"    nombre_asignatura VARCHAR(50) ,\r\n" + 
-					"    dia VARCHAR(25) NOT NULL ,\r\n" + 
-					"    id_intervalo_hora INT UNSIGNED ,\r\n" + 
-					"    FOREIGN KEY (id_intervalo_hora) REFERENCES intervalo_hora(id) ,\r\n" + 
-					"    id_horario INT UNSIGNED ,\r\n" + 
-					"    FOREIGN KEY (id_horario) REFERENCES horario(id) \r\n" + 
-					");";
-			st.executeUpdate(Query6);
-			
-			System.out.println("BD borrada correctamente.");
-			
-	        JOptionPane.showMessageDialog(null, "Hecho , se va a reiniciar la aplicación", "Información", 1);
-	        
-	        guardarLaProximaPantallaQueSeAbre("Todos los horarios");
-	        
-	        
-	        restartApplication(null);
-	        
-		}
-		catch (Exception ex) {
-			System.out.println("Error reiniciar la BD :(");
-			ex.printStackTrace();
-		}
-		
-	}
-	
 	
 	public void updateData_intervalo_hora(LocalTime hora_inicio , LocalTime hora_fin , int id , int id_horario) {
 		try {
