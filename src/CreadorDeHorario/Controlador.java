@@ -98,6 +98,7 @@ import javax.swing.table.TableColumnModel;
 
 import org.w3c.dom.events.MouseEvent;
 
+import CreadorDeHorario.Novedades.Novedades;
 import CreadorDeHorario.libraries.BCrypt;
 
 
@@ -133,6 +134,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	private Update update;
 	private Login login;
 	private AutoLogin autoLogin;
+	private Novedades novedades;
 	
 	private int mesActual; // Guardan el mes y año actuales al abrir el Calendario
 	private int anioActual;
@@ -254,7 +256,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	private static String tokenUsuario_logueado;
 	private static int idUsuario_logueado;
 	
-	public Controlador(Vista vista, Calendario_Horiario calendario , Configuracion configuracion , MySQL_Operations sql , BorrarFila borrarFila, Update update, Login login, AutoLogin autoLogin) {
+	public Controlador(Vista vista, Calendario_Horiario calendario , Configuracion configuracion , MySQL_Operations sql , BorrarFila borrarFila, Update update, Login login, AutoLogin autoLogin, Novedades novedades) {
 		leerSesionDeUsuarioLogueado();
 		//JOptionPane.showMessageDialog(null, nombreUsuario_logueado + "\n" + tokenUsuario_logueado);
 		diasDeLaSemana.add("Lunes");
@@ -272,6 +274,13 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		this.update = update;
 		this.login = login;
 		this.autoLogin = autoLogin;
+		this.novedades = novedades;
+		
+		if(leerMostrarNovedadesAlIniciar()) {
+			novedades.lanzarVentana();
+			novedades.setLocationRelativeTo(null);
+			novedades.setVisible(true);
+		}
 		
 		vista.ventana_principal.addWindowListener(this);
 		
@@ -1028,6 +1037,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 			readFileFromUrlAndCheckUpdate();
 			if(!actualizacion_necesaria) {
 				JOptionPane.showMessageDialog(null, "Tienes la última versión");
+				mostrarNovedadesAlIniciar(false);
 			}
 		}else if(e.getSource().equals(login.btn_login) && login.btn_login.isEnabled()) {
 			//JOptionPane.showMessageDialog(null, "login");
@@ -3214,9 +3224,11 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 					update.setLocationRelativeTo(vista.ventana_principal);
 					update.setVisible(true);
 					actualizacion_necesaria = true;
+					//mostrarNovedadesAlIniciar(true);
 					//JOptionPane.showMessageDialog(null, "Hay una actulización disponible\nTu versión actual: " + version.version + "\nÚltima versión: " + inputLine);
 				}else {
 					actualizacion_necesaria = false;
+					mostrarNovedadesAlIniciar(false);
 				}
 			}
 			
@@ -4495,5 +4507,79 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 				e1.printStackTrace();
 			}
 		}
+	}
+	
+	/**
+	 * 
+	 */
+	public void mostrarNovedadesAlIniciar(boolean verNovedadesAlIniciar) {
+		/*
+		 * Ecribe el fichero con el token de usuario
+		 */
+		
+		File ficheroSalida_novedades = new File("news.txt");
+		
+		try {
+			FileWriter escrituraFichero = new FileWriter(ficheroSalida_novedades);
+			PrintWriter pw = new PrintWriter(escrituraFichero);
+			
+			pw.print(verNovedadesAlIniciar);
+			
+			escrituraFichero.close();
+			pw.close();
+			
+			//JOptionPane.showMessageDialog(null, "mostrar novedades guardado ");
+
+			
+		} catch (IOException e2) {
+			e2.printStackTrace();
+			
+			StringWriter error = new StringWriter();
+			e2.printStackTrace(new PrintWriter(error));
+			
+			
+			JOptionPane.showMessageDialog(vista.ventana_principal, error.toString() , "Se ha producido un error :(" , JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	public boolean leerMostrarNovedadesAlIniciar() {
+		boolean mostrarNovedadesAlIniciar = false;
+		String mostrarNovedadesAlIniciar_text = "?";
+		/*
+		 * Lee el nombre_usuario 
+		 */
+		
+		Scanner lectorFichero;
+		
+		File ficheroSalida = new File("news.txt");
+		
+		
+		try {
+			lectorFichero = new Scanner(ficheroSalida);
+			
+			while (lectorFichero.hasNext()) {
+//				System.out.println(lectorFichero.nextLine());
+				mostrarNovedadesAlIniciar_text = lectorFichero.nextLine();
+			}
+			
+			lectorFichero.close();
+		} catch (Exception e) {
+			
+			
+			e.printStackTrace();
+			
+			StringWriter error = new StringWriter();
+			e.printStackTrace(new PrintWriter(error));	
+		}
+		
+		if(mostrarNovedadesAlIniciar_text.equals("true")) {
+			mostrarNovedadesAlIniciar = true;
+			//JOptionPane.showMessageDialog(null, "mostrar novedades");
+		}
+		
+		return mostrarNovedadesAlIniciar;
 	}
 }

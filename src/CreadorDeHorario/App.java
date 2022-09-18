@@ -3,6 +3,8 @@
  */
 package CreadorDeHorario;
 
+import CreadorDeHorario.Novedades.Novedades;
+
 /**
  * @author Juan Manuel Torres Martínez
  *
@@ -25,8 +27,9 @@ public class App {
 		MySQL_Operations sql = new MySQL_Operations();
 		Update update = new Update();
 		Login login = new Login();
-		AutoLogin autoLogin = new AutoLogin(); 
-		Controlador controlador = new Controlador(vista , calendario , configuracion , sql, borrarFila, update, login, autoLogin);
+		AutoLogin autoLogin = new AutoLogin();
+		Novedades novedades = new Novedades();
+		Controlador controlador = new Controlador(vista , calendario , configuracion , sql, borrarFila, update, login, autoLogin, novedades);
 		
 		
 	}
