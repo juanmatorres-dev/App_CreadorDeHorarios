@@ -301,6 +301,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		configuracion.test_notificaciones.addMouseListener(this);
 		configuracion.comboBox_tipoDeBarra.addMouseListener(this);
 		configuracion.btn_check_update.addMouseListener(this);
+		configuracion.btn_novedades.addMouseListener(this);
 		
 		vista.table.addMouseListener(this);
 		
@@ -1039,6 +1040,10 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 				JOptionPane.showMessageDialog(null, "Tienes la última versión");
 				mostrarNovedadesAlIniciar(false);
 			}
+		}else if(e.getSource().equals(configuracion.btn_novedades)) {
+			novedades.lanzarVentana();
+			novedades.setLocationRelativeTo(null);
+			novedades.setVisible(true);
 		}else if(e.getSource().equals(login.btn_login) && login.btn_login.isEnabled()) {
 			//JOptionPane.showMessageDialog(null, "login");
 			

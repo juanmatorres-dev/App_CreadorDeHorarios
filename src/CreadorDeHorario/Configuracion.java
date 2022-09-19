@@ -44,6 +44,7 @@ public class Configuracion extends JDialog {
 	public JCheckBox chckbxMostrarNotificaciones;
 	public JComboBox comboBox_tipoDeBarra;
 	public JButton btn_check_update;
+	public JButton btn_novedades;
 
 	/**
 	 * Launch the application.
@@ -188,14 +189,15 @@ public class Configuracion extends JDialog {
 					panel.add(panel_autor_1);
 					panel_autor_1.setLayout(null);
 					{
-						JLabel lblAutorJuan = new JLabel("Autor (de la App ) : Juan Manuel Torres Martínez");
+						JLabel lblAutorJuan = new JLabel("Juan Manuel Torres Martínez");
+						lblAutorJuan.setHorizontalAlignment(SwingConstants.CENTER);
 						lblAutorJuan.setBounds(82, 21, 293, 17);
 						lblAutorJuan.setFont(new Font("Tahoma", Font.PLAIN, 14));
 						panel_autor_1.add(lblAutorJuan);
 					}
 
 					TitledBorder title_autor2; // Título en forma de borde
-					title_autor2 = BorderFactory.createTitledBorder("Autor");
+					title_autor2 = BorderFactory.createTitledBorder("Desarrollado por");
 					panel_autor_1.setBorder(title_autor2);
 					
 					JLabel lbl_linkedin = new JLabel("");
@@ -278,8 +280,15 @@ public class Configuracion extends JDialog {
 					panel_version_1.setBorder(title_version2);
 					
 					btn_check_update = new JButton("Comprobar si hay actualizaciones");
-					btn_check_update.setBounds(109, 62, 244, 23);
+					btn_check_update.setFocusable(false);
+					btn_check_update.setBounds(10, 62, 234, 23);
 					panel_version_1.add(btn_check_update);
+					
+					btn_novedades = new JButton("Novedades de la versión");
+					btn_novedades.setFocusable(false);
+					btn_novedades.setHorizontalTextPosition(SwingConstants.CENTER);
+					btn_novedades.setBounds(275, 62, 178, 23);
+					panel_version_1.add(btn_novedades);
 				}
 
 				panel_iconos_1 = new JPanel();
