@@ -4,6 +4,7 @@
 package CreadorDeHorario;
 
 import CreadorDeHorario.Novedades.Novedades;
+import CreadorDeHorario.vistas.FalloDeConexion;
 
 /**
  * @author Juan Manuel Torres Martínez
@@ -29,7 +30,8 @@ public class App {
 		Login login = new Login();
 		AutoLogin autoLogin = new AutoLogin();
 		Novedades novedades = new Novedades();
-		Controlador controlador = new Controlador(vista , calendario , configuracion , sql, borrarFila, update, login, autoLogin, novedades);
+		FalloDeConexion falloDeConexion = new FalloDeConexion();
+		Controlador controlador = new Controlador(vista , calendario , configuracion , sql, borrarFila, update, login, autoLogin, novedades, falloDeConexion);
 		
 		
 	}

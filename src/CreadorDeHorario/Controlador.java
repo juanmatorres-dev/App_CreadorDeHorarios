@@ -100,6 +100,7 @@ import org.w3c.dom.events.MouseEvent;
 
 import CreadorDeHorario.Novedades.Novedades;
 import CreadorDeHorario.libraries.BCrypt;
+import CreadorDeHorario.vistas.FalloDeConexion;
 
 
 
@@ -135,6 +136,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	private Login login;
 	private AutoLogin autoLogin;
 	private Novedades novedades;
+	private FalloDeConexion falloDeConexion;
 	
 	private int mesActual; // Guardan el mes y año actuales al abrir el Calendario
 	private int anioActual;
@@ -256,7 +258,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	private static String tokenUsuario_logueado;
 	private static int idUsuario_logueado;
 	
-	public Controlador(Vista vista, Calendario_Horiario calendario , Configuracion configuracion , MySQL_Operations sql , BorrarFila borrarFila, Update update, Login login, AutoLogin autoLogin, Novedades novedades) {
+	public Controlador(Vista vista, Calendario_Horiario calendario , Configuracion configuracion , MySQL_Operations sql , BorrarFila borrarFila, Update update, Login login, AutoLogin autoLogin, Novedades novedades, FalloDeConexion falloDeConexion) {
 		leerSesionDeUsuarioLogueado();
 		//JOptionPane.showMessageDialog(null, nombreUsuario_logueado + "\n" + tokenUsuario_logueado);
 		diasDeLaSemana.add("Lunes");
@@ -275,6 +277,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		this.login = login;
 		this.autoLogin = autoLogin;
 		this.novedades = novedades;
+		this.falloDeConexion = falloDeConexion;
 		
 		if(leerMostrarNovedadesAlIniciar()) {
 			novedades.lanzarVentana();
@@ -320,6 +323,19 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		login.ojo_pass_register.addMouseListener(this);
 		login.ojo_repeat_pass_register.addMouseListener(this);
 		login.ojo_pass_login.addMouseListener(this);
+		
+		falloDeConexion.addWindowListener(this);
+		
+		
+		closeConnection();
+		iniciar_Conexion_Con_Servidor();
+		
+		if(!conexionEstablecida) {
+			//JOptionPane.showMessageDialog(null, "No se ha podido conectar con el servidor");
+			falloDeConexion.lanzarVentana();
+			falloDeConexion.setLocationRelativeTo(null);
+			falloDeConexion.setVisible(true);
+		}
 		
 		if(!autoLogin()) {
 			autoLogin.dispose();
@@ -1037,7 +1053,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 			update.actual_version.setText("Versión actual:   ");
 			readFileFromUrlAndCheckUpdate();
 			if(!actualizacion_necesaria) {
-				JOptionPane.showMessageDialog(null, "Tienes la última versión");
+				JOptionPane.showMessageDialog(null, "Tienes la última versión", "Genial :)", JOptionPane.INFORMATION_MESSAGE);
 				mostrarNovedadesAlIniciar(false);
 			}
 		}else if(e.getSource().equals(configuracion.btn_novedades)) {
@@ -1238,6 +1254,8 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		}else if(e.getSource().equals(configuracion)) {
 			configurarTipoDeBarra();	
 		}else if(e.getSource().equals(login)) {
+			System.exit(0);
+		}else if(e.getSource().equals(falloDeConexion)) {
 			System.exit(0);
 		}
 		
