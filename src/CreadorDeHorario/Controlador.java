@@ -120,6 +120,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	private String pass = dataBaseInfo.pass;
 	private String BD = dataBaseInfo.BD;
 	
+	private int contadorLoginFallidos = 0;
 	
 	private boolean actualizacion_necesaria = false;
 	
@@ -1073,11 +1074,11 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 			
 			//🔥
 			
-		}else if(e.getSource().equals(login.ojo_pass_register)) {
+		}else if(e.getSource().equals(login.ojo_pass_register) && login.ojo_pass_register.isEnabled()) {
 			ver_ocultar_password(visible_pass_register, "ojo_pass_register");
-		}else if(e.getSource().equals(login.ojo_repeat_pass_register)) {
+		}else if(e.getSource().equals(login.ojo_repeat_pass_register) && login.ojo_repeat_pass_register.isEnabled()) {
 			ver_ocultar_password(visible_repeat_pass_register, "ojo_repeat_pass_register");
-		}else if(e.getSource().equals(login.ojo_pass_login)) {
+		}else if(e.getSource().equals(login.ojo_pass_login) && login.ojo_pass_login.isEnabled()) {
 			ver_ocultar_password(visible_pass_login, "ojo_pass_login");
 		}
 	}
@@ -3411,6 +3412,22 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		login.btn_Registrarse.setText("");
 		login.register_loading.setVisible(true);
 		
+		/*
+		 * Desactivamos también los inputs registro
+		 */
+		login.input_nombre_de_usuario.setEnabled(false);
+		login.input_email.setEnabled(false);
+		login.input_password.setEnabled(false);
+		login.input_repeat_password.setEnabled(false);
+		login.textField_pass_register.setEnabled(false);
+		login.textField_repeat_pass_register.setEnabled(false);
+		login.atras_crear_cuenta.setEnabled(false);
+		login.ojo_pass_register.setEnabled(false);
+		login.ojo_repeat_pass_register.setEnabled(false);
+		login.comboBox_idioma.setEnabled(false);
+		login.imagen_user.setEnabled(false);
+		
+		
 		boolean registroValido = false;
 		boolean todosLosCamposRellenos = false;
 		boolean usuarioValido = false;
@@ -3630,6 +3647,21 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		login.btn_Registrarse.setEnabled(true);
 		login.btn_Registrarse.setText("Registrarse");
 		login.register_loading.setVisible(false);
+		
+		/*
+		 * Reactivamos también los inputs registro
+		 */
+		login.input_nombre_de_usuario.setEnabled(true);
+		login.input_email.setEnabled(true);
+		login.input_password.setEnabled(true);
+		login.input_repeat_password.setEnabled(true);
+		login.textField_pass_register.setEnabled(true);
+		login.textField_repeat_pass_register.setEnabled(true);
+		login.atras_crear_cuenta.setEnabled(true);
+		login.ojo_pass_register.setEnabled(true);
+		login.ojo_repeat_pass_register.setEnabled(true);
+		login.comboBox_idioma.setEnabled(true);
+		login.imagen_user.setEnabled(true);
 	}
 	
 	/**
@@ -4063,6 +4095,14 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		login.btn_login.setEnabled(false);
 		login.btn_login.setText("");
 		login.login_loading.setVisible(true);
+		/*
+		 * Desactivamos también los inputs
+		 */
+		login.user_input.setEnabled(false);
+		login.password_input_login.setEnabled(false);
+		login.textField_pass_login.setEnabled(false);
+		login.ojo_pass_login.setEnabled(false);
+		login.lbl_Registrarse.setEnabled(false);
 		
 		//JOptionPane.showMessageDialog(null, "iniciando sesión ...");
 		
@@ -4103,7 +4143,24 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 			serviceCloseLogin.schedule(esperarAntesDeCerrarVentanaDeLogin, 1500, TimeUnit.MILLISECONDS);
 		}else {
 			login.login_loading.setIcon(new ImageIcon("images/no_conectado_(32x32).png"));
-			login.portada_img.setIcon(new ImageIcon("images/login/login_falied/no_5.gif"));
+			if(contadorLoginFallidos <= 5) {
+				System.out.println("login failed => [" + contadorLoginFallidos + "]");
+				login.portada_img.setIcon(new ImageIcon("images/login/login_falied/no_5.gif"));
+				contadorLoginFallidos++;
+			}else if(contadorLoginFallidos <= 8) {
+				System.out.println("login failed => [" + contadorLoginFallidos + "]");
+				login.portada_img.setIcon(new ImageIcon("images/login/login_falied/no_8.gif"));
+				contadorLoginFallidos++;
+			}else if(contadorLoginFallidos <= 10) {
+				System.out.println("login failed => [" + contadorLoginFallidos + "]");
+				login.portada_img.setIcon(new ImageIcon("images/login/login_falied/no_10.gif"));
+				contadorLoginFallidos++;
+			}else {
+				System.out.println("login failed => [" + contadorLoginFallidos + "]");
+				login.portada_img.setIcon(new ImageIcon("images/login/login_falied/no_10.gif"));
+				contadorLoginFallidos++;
+			}
+			
 			serviceLogin_btn.schedule(esperarAntesDeActivarBotonDeLogin, 3, TimeUnit.SECONDS);
 		}
 		
@@ -4120,6 +4177,15 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		login.btn_login.setText("Iniciar sesión");
 		login.login_loading.setVisible(false);
 		login.portada_img.setIcon(new ImageIcon("images/Portada de lanzamiento Creador de horarios .png"));
+		
+		/*
+		 * Reactivamos también los inputs
+		 */
+		login.user_input.setEnabled(true);
+		login.password_input_login.setEnabled(true);
+		login.textField_pass_login.setEnabled(true);
+		login.ojo_pass_login.setEnabled(true);
+		login.lbl_Registrarse.setEnabled(true);
 	}
 	
 	

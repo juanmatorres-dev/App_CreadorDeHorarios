@@ -54,7 +54,7 @@ public class Login extends JDialog {
 	private JPanel registro;
 	private JPanel login;
 	private JPanel user_image;
-	private JLabel lbl_Registrarse;
+	public JLabel lbl_Registrarse;
 	public JButton btn_Registrarse;
 	public JButton btn_login;
 	public JInternalFrame internalFrame;
@@ -77,6 +77,7 @@ public class Login extends JDialog {
 	public JLabel login_loading;
 	private JLabel info_login;
 	public JLabel portada_img;
+	public JLabel atras_crear_cuenta;
 
 	/**
 	 * Launch the application.
@@ -259,9 +260,10 @@ public class Login extends JDialog {
 			}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				registro.setVisible(false);
-				user_image.setVisible(true);
-				
+				if(imagen_user.isEnabled()) {
+					registro.setVisible(false);
+					user_image.setVisible(true);
+				}				
 			}
 		});
 		imagen_user.setHorizontalAlignment(SwingConstants.CENTER);
@@ -273,7 +275,7 @@ public class Login extends JDialog {
 		btn_Registrarse.setBounds(110, 468, 135, 40);
 		registro.add(btn_Registrarse);
 		
-		JLabel atras_crear_cuenta = new JLabel("");
+		atras_crear_cuenta = new JLabel("");
 		atras_crear_cuenta.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -281,9 +283,11 @@ public class Login extends JDialog {
 			}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				registro.setVisible(false);
-				login.setVisible(true);
-				
+				if(atras_crear_cuenta.isEnabled()) {
+					registro.setVisible(false);
+					login.setVisible(true);
+					internalFrame.setVisible(false);
+				}
 			}
 		});
 		atras_crear_cuenta.setIcon(new ImageIcon("images/flecha_atras.png"));
@@ -383,16 +387,20 @@ public class Login extends JDialog {
 		lbl_Registrarse.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				lbl_Registrarse.setCursor(new Cursor(Cursor.HAND_CURSOR));
-				Font font = new Font("Tahoma", Font.BOLD, 13);
-				Map attributes = font.getAttributes();
-				attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
-				lbl_Registrarse.setFont(font.deriveFont(attributes));
+				if(lbl_Registrarse.isEnabled()) {
+					lbl_Registrarse.setCursor(new Cursor(Cursor.HAND_CURSOR));
+					Font font = new Font("Tahoma", Font.BOLD, 13);
+					Map attributes = font.getAttributes();
+					attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+					lbl_Registrarse.setFont(font.deriveFont(attributes));
+				}
 			}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				login.setVisible(false);
-				registro.setVisible(true);
+				if(lbl_Registrarse.isEnabled()) {
+					login.setVisible(false);
+					registro.setVisible(true);
+				}
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {
