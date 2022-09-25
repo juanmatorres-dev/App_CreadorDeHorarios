@@ -1953,7 +1953,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		}
 		catch (Exception ex) {
 			System.out.println("Error al seleccionar la base de datos :(");
-			JOptionPane.showMessageDialog(null, "No se ha podido seleccionar la base de datos , prueba con la opción de borrar y reconstruir ( Opciones - Acción de alto impacto ❗ ) ", "Se ha producido un error :(", 0);
+			JOptionPane.showMessageDialog(null, "No se ha podido seleccionar la base de datos", "Se ha producido un error :(", 0);
 			ex.printStackTrace();
 		}
 		
