@@ -27,6 +27,9 @@ import javax.swing.SwingConstants;
 import javax.swing.JTabbedPane;
 import javax.swing.JCheckBox;
 import javax.swing.event.ChangeListener;
+
+import CreadorDeHorario.VerMasIconos.MasIconos;
+
 import javax.swing.event.ChangeEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -45,6 +48,7 @@ public class Configuracion extends JDialog {
 	public JComboBox comboBox_tipoDeBarra;
 	public JButton btn_check_update;
 	public JButton btn_novedades;
+	public JButton verMasIconos;
 
 	/**
 	 * Launch the application.
@@ -678,7 +682,7 @@ public class Configuracion extends JDialog {
 		lblcandadoCerrado.setHorizontalAlignment(SwingConstants.CENTER);
 		lblcandadoCerrado.setForeground(new Color(0, 0, 153, 1));
 		lblcandadoCerrado.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblcandadoCerrado.setBounds(43, 173, 136, 39);
+		lblcandadoCerrado.setBounds(25, 157, 136, 39);
 		panel_iconos_1.add(lblcandadoCerrado);
 		
 		JLabel lblimpresora = new JLabel("<HTML><U> (impresora) </U></FONT></HTML>");
@@ -700,7 +704,7 @@ public class Configuracion extends JDialog {
 		lblimpresora.setHorizontalAlignment(SwingConstants.CENTER);
 		lblimpresora.setForeground(new Color(0, 0, 153, 1));
 		lblimpresora.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblimpresora.setBounds(225, 173, 83, 39);
+		lblimpresora.setBounds(42, 191, 83, 39);
 		panel_iconos_1.add(lblimpresora);
 		
 		JLabel lbllinkedin = new JLabel("<HTML><U> (linkedin)</U></FONT></HTML>");
@@ -722,7 +726,7 @@ public class Configuracion extends JDialog {
 		lbllinkedin.setHorizontalAlignment(SwingConstants.CENTER);
 		lbllinkedin.setForeground(new Color(0, 0, 153, 1));
 		lbllinkedin.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lbllinkedin.setBounds(345, 173, 68, 39);
+		lbllinkedin.setBounds(434, 191, 68, 39);
 		panel_iconos_1.add(lbllinkedin);
 		
 		JLabel lblgithub = new JLabel("<HTML><U> (github) </U></FONT></HTML>");
@@ -744,8 +748,23 @@ public class Configuracion extends JDialog {
 		lblgithub.setHorizontalAlignment(SwingConstants.CENTER);
 		lblgithub.setForeground(new Color(0, 0, 153, 1));
 		lblgithub.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblgithub.setBounds(441, 173, 61, 39);
+		lblgithub.setBounds(441, 157, 61, 39);
 		panel_iconos_1.add(lblgithub);
+		
+		verMasIconos = new JButton("Ver más iconos");
+		verMasIconos.setFocusable(false);
+		verMasIconos.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				MasIconos masIconos = new MasIconos();
+				masIconos.txtrA.repaint();
+				masIconos.lanzarVentana();
+				masIconos.setLocationRelativeTo(null);
+				masIconos.setVisible(true);
+			}
+		});
+		verMasIconos.setBounds(225, 183, 136, 23);
+		panel_iconos_1.add(verMasIconos);
 
 	}
 }

@@ -29,5 +29,8 @@ public class Novedades_text_v_9_0_0_beta {
 			+ "- Errores ortográficos solucionados\r\n"
 			+ "\r\n"
 			+ "- Actualización de notificaciones (Ahora muestra al cambiar de asignatura o evento el tiempo restante del horario en la notificación de Windows 10)\r\n"
-			+ "";
+			+ "\r\n"
+			+ "- Actualización del actualizador automático : ahora muestra las novedades de la actualización tras realizarse esta. También pueden verse más tarde en configuración => acerca de\r\n"
+			+ "\r\n"
+			+ "- Añadidos más iconos en la sección acerca de";
 }

@@ -18,6 +18,7 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URI;
 import java.util.Scanner;
 
 import javax.swing.SwingConstants;
@@ -34,6 +35,8 @@ import javax.swing.JMenu;
 import java.awt.Component;
 import javax.swing.JMenuItem;
 import java.awt.ComponentOrientation;
+import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Color;
 import javax.swing.border.EtchedBorder;
 import java.awt.FlowLayout;
@@ -299,13 +302,37 @@ public class Vista {
 		lbl_loading_bloquear.setBounds(818, 60, 25, 25);
 		panel_botones_inferiores.add(lbl_loading_bloquear);
 		
-		JLabel lblNewLabel = new JLabel("");
-		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setIcon(new ImageIcon("images/Animated_loading_half-circle_(16x16).gif"));
-		lblNewLabel.setBounds(869, 52, 98, 36);
-		panel_botones_inferiores.add(lblNewLabel);
+		JLabel papelera = new JLabel("");
+		papelera.setVisible(false);
+		papelera.setHorizontalAlignment(SwingConstants.CENTER);
+		papelera.setIcon(new ImageIcon("images/Animated_loading_half-circle_(16x16).gif"));
+		papelera.setBounds(869, 52, 98, 36);
+		panel_botones_inferiores.add(papelera);
 		
 		JLabel donate = new JLabel("");
+		donate.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				donate.setCursor(new Cursor(Cursor.HAND_CURSOR));
+			}
+			@Override
+			public void mousePressed(MouseEvent e) {
+				donate.setBorder(BorderFactory.createLoweredBevelBorder());
+			}
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				donate.setBorder(BorderFactory.createRaisedBevelBorder());
+			}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				try {
+					Desktop.getDesktop().browse(new URI(
+							"https://www.buymeacoffee.com/juanmatorresdev"));
+				} catch (Exception er) {
+					JOptionPane.showInternalMessageDialog(null, "Error ");
+				}
+			}
+		});
 		donate.setIcon(new ImageIcon("images/main_window/coffee-cup_32_px.png"));
 		donate.setHorizontalAlignment(SwingConstants.CENTER);
 		donate.setBounds(31, 46, 46, 46);
@@ -313,6 +340,29 @@ public class Vista {
 		donate.setBorder(BorderFactory.createRaisedBevelBorder());
 		
 		JLabel bug = new JLabel("");
+		bug.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				bug.setCursor(new Cursor(Cursor.HAND_CURSOR));
+			}
+			@Override
+			public void mousePressed(MouseEvent e) {
+				bug.setBorder(BorderFactory.createLoweredBevelBorder());
+			}
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				bug.setBorder(BorderFactory.createRaisedBevelBorder());
+			}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				try {
+					Desktop.getDesktop().browse(new URI(
+							"https://github.com/juanmatorres-dev/App_CreadorDeHorarios/issues/new"));
+				} catch (Exception er) {
+					JOptionPane.showInternalMessageDialog(null, "Error ");
+				}
+			}
+		});
 		bug.setIcon(new ImageIcon("images/main_window/bug_32_px.png"));
 		bug.setHorizontalAlignment(SwingConstants.CENTER);
 		bug.setBorder(BorderFactory.createRaisedBevelBorder());
