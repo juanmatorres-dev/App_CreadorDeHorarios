@@ -7,6 +7,13 @@
 3. Espera a que GitHub Pages procese el cambio.
 4. Ahora cambia la versión en last_version.txt o last_version_beta.txt según la versión
 
+# Comprobar cambios desde el navegador
+
+[last_version_beta](https://juanmatorres-dev.me/App_CreadorDeHorarios/last_version_beta.txt)
+
+[last_version_download_link_beta](https://juanmatorres-dev.me/App_CreadorDeHorarios/last_version_download_link_beta.txt)
+
+
 # App Creador de horarios
 
 Crear horarios rápidamente, imprímelos, genera PDF, visualiza los cambios en tiempo real y mucho más.
