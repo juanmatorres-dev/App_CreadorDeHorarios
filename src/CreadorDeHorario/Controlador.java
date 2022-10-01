@@ -435,7 +435,8 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 			accionBotonBloquear();
 			
 			if(vista.table.getRowCount() > 8) {
-		        JOptionPane.showMessageDialog(null, "Tu horario tiene más de 8 tramos horarios , la experiencia de usuario podría ser peor", "Advertencia", JOptionPane.WARNING_MESSAGE);
+		        //JOptionPane.showMessageDialog(null, "Tu horario tiene más de 8 tramos horarios , la experiencia de usuario podría ser peor", "Advertencia", JOptionPane.WARNING_MESSAGE);
+		        mostrarNotificacion("Advertencia", "Tu horario tiene más de 8 tramos horarios , la experiencia de usuario podría ser peor");
 			}
 			
 		}
@@ -578,6 +579,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		String contenidoDeLaCabeceradiasDeLaSemana [] = {"Hora" , "Lunes" , "Martes" , "Miércoles" , "Jueves" , "Viernes" , "Sábado"  , "Domingo"};
 		
 		int numeroDeColumna = 0;
+		int numeroDeFila = 0;
 		
 		try {
 			
@@ -695,7 +697,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 			System.out.println("error " + asignaturas_enDia_Nombre_En_Texto);
 			System.out.println("error " + id_intervalo_hora_asignatura_limpio_entero);
         	try {
-        		vista.table.setValueAt(asignaturas_enDia_Nombre_En_Texto.get(i).substring(1, asignaturas_enDia_Nombre_En_Texto.get(i).length() - 1), id_intervalo_hora_asignatura_limpio_entero.get(i) - 1, numeroDeColumna);
+        		vista.table.setValueAt(asignaturas_enDia_Nombre_En_Texto.get(i).substring(1, asignaturas_enDia_Nombre_En_Texto.get(i).length() - 1), i, numeroDeColumna);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -1512,6 +1514,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 			conexion = DriverManager.getConnection("jdbc:mysql:" + urlDelServidor_incompleta + db_name, user, pass);
 			System.out.println("Se ha iniciado la conexión con el servidor");
 			conexionEstablecida = true;
+			establecerZonaHorariaConcreta("+2:00");
 		} catch (Exception ex) {
 			System.out.println("Error en la conexión.");
 			conexionEstablecida = false;
@@ -1534,8 +1537,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	 * 
 	 */
 	public void insertData_btn_insertarFila(int id_horario) {
-		
-		
+		int id_intervalo_hora = 0;
 		
 		String [] diasDeLaSemanaFijo = {"Lunes" , "Martes" , "Miércoles" , "Jueves" , "Viernes"}; 
 		
@@ -1545,9 +1547,31 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 			Statement st = conexion.createStatement();
 			st.executeUpdate(Query);
 			
+			try {
+				String Query2 = "select id from intervalo_hora where id_horario = ? order by id desc limit 1;";
+				
+				PreparedStatement pStmt = conexion.prepareStatement(Query2);
+				pStmt.setInt(1, id_horario);
+				
+				
+				ResultSet rs = pStmt.executeQuery();
+				
+				while (rs.next()) {
+					System.out.println("(" + rs.getMetaData().getColumnCount() + ")");
+					System.out.println("(" + rs.getString(1) + ")");
+					id_intervalo_hora = Integer.parseInt(rs.getString(1));
+				}
+				pStmt.close();
+				rs.close();
+				
+			}
+			catch (Exception ex) {
+				System.out.println(ex);
+			}
+			
 			for (int i = 0; i < 5; i++) {
 //				System.out.println("=>>>>>>>>>>>>>>>>>>" + vista.table.getRowCount());
-				Query = "INSERT INTO asignatura(nombre_asignatura , dia , id_intervalo_hora , id_horario) VALUES('' , '" + diasDeLaSemanaFijo[i] + "' , " + (vista.table.getRowCount() + 1) + ", " + id_horario + ");";
+				Query = "INSERT INTO asignatura(nombre_asignatura , dia , id_intervalo_hora , id_horario) VALUES('' , '" + diasDeLaSemanaFijo[i] + "' , " + id_intervalo_hora + ", " + id_horario + ");";
 				
 				st = conexion.createStatement();
 				st.executeUpdate(Query);
@@ -1923,14 +1947,21 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	 * 
 	 */
 	private void establecerZonaHorariaConcreta(String zonaHoraria) {
-		try {
+		/*try {
 			String Query = "SET GLOBAL time_zone = '"+ zonaHoraria +"';";
 			Statement st = conexion.createStatement();
 			st.executeUpdate(Query);
-			
+			System.out.println("Zona horaria global actualizada correctamente.");
+		}
+		catch (Exception ex) {
+			System.out.println("Error al cambiar la zona horaria :(");
+			ex.printStackTrace();
+		}*/
+		
+		try {
+			Statement st = conexion.createStatement();
 			String Query2 = "SET time_zone = '" + zonaHoraria + "';";
 			st.executeUpdate(Query2);
-			
 			System.out.println("Zona horaria actualizada correctamente.");
 		}
 		catch (Exception ex) {
@@ -2149,7 +2180,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 							
 						}else {
 							System.out.println(diaDeLaSemana);
-							updateData_asignatura("asignatura", textoDelCampo, diaDeLaSemana, (filaDeLaTabla + 1) , Integer.valueOf(leerHorarioParaAbrir()));
+							updateData_asignatura("asignatura", textoDelCampo, diaDeLaSemana, ids_intervalosHora.get(filaDeLaTabla) , Integer.valueOf(leerHorarioParaAbrir()));
 						}
 						
 					}
