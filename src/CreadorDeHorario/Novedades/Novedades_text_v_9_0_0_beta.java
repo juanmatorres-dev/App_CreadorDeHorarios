@@ -8,7 +8,15 @@ package CreadorDeHorario.Novedades;
  *
  */
 public class Novedades_text_v_9_0_0_beta {
-	public final String novedades_text_v_9_0_0_beta = "- ¡¡ Actualización multi usuario ya disponible !!\r\n"
+	public final String novedades_text_v_9_0_0_beta = "- ¡¡ Parche para la versión v.9.0.0_beta !!\r\n"
+			+ "\r\n"
+			+ "- Ahora la advertencia de horario grande se muestra por notificación de Windows 10\r\n"
+			+ "- Ahora se configura correctamente la zona horaria en el servidor final\r\n"
+			+ "- Ahora se asocian correctamente las asignaturas o eventos con su intervalo horario\r\n"
+			+ "- Ahora se muestran el contenido de los horarios correctamente\r\n"
+			+ "\r\n"
+			+ "\r\n"
+			+ "- ¡¡ Actualización multi usuario ya disponible !!\r\n"
 			+ "\r\n"
 			+ "- Ahora cada usuario puede tener su cuenta con todos sus datos separados de forma independiente.\r\n"
 			+ "\r\n"
