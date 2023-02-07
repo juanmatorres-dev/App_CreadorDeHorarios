@@ -3254,7 +3254,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	 * Leer un fichero de texto desde una url
 	 */
 	public void readFileFromUrlAndCheckUpdate() {
-		String link = "https://juanmatorres-dev.me/App_CreadorDeHorarios/last_version_beta.txt";
+		String link = "https://juanmatorres-dev.github.io/App_CreadorDeHorarios/last_version_beta.txt";
 		String tmp;
 		
 		try {
@@ -3307,7 +3307,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	 */
 	public String readFileFromUrlAndOpenUpdateDownloadLink() {
 		String linkToUpdate = "?";
-		String link = "https://juanmatorres-dev.me/App_CreadorDeHorarios/last_version_download_link_beta.txt";
+		String link = "https://juanmatorres-dev.github.io/App_CreadorDeHorarios/last_version_download_link_beta.txt";
 		String tmp;
 		
 		try {
