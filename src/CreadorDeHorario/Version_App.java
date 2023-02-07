@@ -8,5 +8,5 @@ package CreadorDeHorario;
  *
  */
 public class Version_App {
-	public final String version = "v.9.0.1_beta";
+	public final String version = "v.9.0.2_beta";
 }
