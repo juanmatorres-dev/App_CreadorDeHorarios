@@ -9,9 +9,9 @@
 
 # Comprobar cambios desde el navegador
 
-[last_version_beta](https://juanmatorres-dev.me/App_CreadorDeHorarios/last_version_beta.txt)
+[last_version_beta](https://juanmatorres-dev.github.io/App_CreadorDeHorarios/last_version_beta.txt)
 
-[last_version_download_link_beta](https://juanmatorres-dev.me/App_CreadorDeHorarios/last_version_download_link_beta.txt)
+[last_version_download_link_beta](https://juanmatorres-dev.github.io/App_CreadorDeHorarios/last_version_download_link_beta.txt)
 
 
 # App Creador de horarios
