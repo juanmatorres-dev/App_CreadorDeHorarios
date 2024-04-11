@@ -99,6 +99,7 @@ import javax.swing.table.TableColumnModel;
 import org.w3c.dom.events.MouseEvent;
 
 import CreadorDeHorario.Novedades.Novedades;
+import CreadorDeHorario.VerMasIconos.MasIconos;
 import CreadorDeHorario.libraries.BCrypt;
 import CreadorDeHorario.vistas.FalloDeConexion;
 
@@ -137,6 +138,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	private Login login;
 	private AutoLogin autoLogin;
 	private Novedades novedades;
+	private MasIconos masIconos;
 	private FalloDeConexion falloDeConexion;
 	
 	private int mesActual; // Guardan el mes y año actuales al abrir el Calendario
@@ -259,7 +261,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 	private static String tokenUsuario_logueado;
 	private static int idUsuario_logueado;
 	
-	public Controlador(Vista vista, Calendario_Horiario calendario , Configuracion configuracion , MySQL_Operations sql , BorrarFila borrarFila, Update update, Login login, AutoLogin autoLogin, Novedades novedades, FalloDeConexion falloDeConexion) {
+	public Controlador(Vista vista, Calendario_Horiario calendario , Configuracion configuracion , MySQL_Operations sql , BorrarFila borrarFila, Update update, Login login, AutoLogin autoLogin, Novedades novedades, FalloDeConexion falloDeConexion, MasIconos masIconos) {
 		leerSesionDeUsuarioLogueado();
 		//JOptionPane.showMessageDialog(null, nombreUsuario_logueado + "\n" + tokenUsuario_logueado);
 		diasDeLaSemana.add("Lunes");
@@ -278,11 +280,12 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		this.login = login;
 		this.autoLogin = autoLogin;
 		this.novedades = novedades;
+		this.masIconos = masIconos;
 		this.falloDeConexion = falloDeConexion;
 		
 		if(leerMostrarNovedadesAlIniciar()) {
 			novedades.lanzarVentana();
-			novedades.setLocationRelativeTo(null);
+			novedades.setLocationRelativeTo(configuracion);
 			novedades.setVisible(true);
 		}
 		
@@ -306,6 +309,7 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 		configuracion.comboBox_tipoDeBarra.addMouseListener(this);
 		configuracion.btn_check_update.addMouseListener(this);
 		configuracion.btn_novedades.addMouseListener(this);
+		configuracion.verMasIconos.addMouseListener(this);
 		
 		vista.table.addMouseListener(this);
 		
@@ -1050,19 +1054,33 @@ public class Controlador implements MouseListener , WindowListener , KeyListener
 
 			System.exit(0);
 			
-		}else if(e.getSource().equals(configuracion.btn_check_update)) {
+		}else if(e.getSource().equals(configuracion.btn_check_update) && configuracion.btn_check_update.isEnabled()) {
+			configuracion.loading_check_update.setIcon(new ImageIcon("images/Loading.gif"));
+			configuracion.btn_check_update.setEnabled(false);
+			configuracion.btn_check_update.setText("");
+			configuracion.loading_check_update.setVisible(true);
+			
 			//JOptionPane.showMessageDialog(null, "btn_check_update");
 			update.last_version.setText("Última versión:   ");
 			update.actual_version.setText("Versión actual:   ");
 			readFileFromUrlAndCheckUpdate();
 			if(!actualizacion_necesaria) {
-				JOptionPane.showMessageDialog(null, "Tienes la última versión", "Genial :)", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(configuracion, "Tienes la última versión", "Genial :)", JOptionPane.INFORMATION_MESSAGE);
 				mostrarNovedadesAlIniciar(false);
 			}
+			
+			configuracion.btn_check_update.setEnabled(true);
+			configuracion.btn_check_update.setText("Comprobar si hay actualizaciones");
+			configuracion.loading_check_update.setVisible(false);
 		}else if(e.getSource().equals(configuracion.btn_novedades)) {
 			novedades.lanzarVentana();
-			novedades.setLocationRelativeTo(null);
+			novedades.setLocationRelativeTo(configuracion);
 			novedades.setVisible(true);
+		}else if(e.getSource().equals(configuracion.verMasIconos)) {
+			masIconos.txtrA.repaint();
+			masIconos.lanzarVentana();
+			masIconos.setLocationRelativeTo(configuracion);
+			masIconos.setVisible(true);
 		}else if(e.getSource().equals(login.btn_login) && login.btn_login.isEnabled()) {
 			//JOptionPane.showMessageDialog(null, "login");
 			

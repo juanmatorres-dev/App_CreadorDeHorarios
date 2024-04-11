@@ -49,6 +49,7 @@ public class Configuracion extends JDialog {
 	public JButton btn_check_update;
 	public JButton btn_novedades;
 	public JButton verMasIconos;
+	public JLabel loading_check_update;
 
 	/**
 	 * Launch the application.
@@ -283,16 +284,22 @@ public class Configuracion extends JDialog {
 					title_version2 = BorderFactory.createTitledBorder("Versión");
 					panel_version_1.setBorder(title_version2);
 					
-					btn_check_update = new JButton("Comprobar si hay actualizaciones");
-					btn_check_update.setFocusable(false);
-					btn_check_update.setBounds(10, 62, 234, 23);
-					panel_version_1.add(btn_check_update);
-					
 					btn_novedades = new JButton("Novedades de la versión");
 					btn_novedades.setFocusable(false);
 					btn_novedades.setHorizontalTextPosition(SwingConstants.CENTER);
 					btn_novedades.setBounds(275, 62, 178, 23);
 					panel_version_1.add(btn_novedades);
+					
+					loading_check_update = new JLabel("");
+					loading_check_update.setHorizontalAlignment(SwingConstants.CENTER);
+					loading_check_update.setVisible(false);
+					loading_check_update.setBounds(10, 62, 234, 23);
+					panel_version_1.add(loading_check_update);
+					
+					btn_check_update = new JButton("Comprobar si hay actualizaciones");
+					btn_check_update.setFocusable(false);
+					btn_check_update.setBounds(10, 62, 234, 23);
+					panel_version_1.add(btn_check_update);
 				}
 
 				panel_iconos_1 = new JPanel();
@@ -753,16 +760,6 @@ public class Configuracion extends JDialog {
 		
 		verMasIconos = new JButton("Ver más iconos");
 		verMasIconos.setFocusable(false);
-		verMasIconos.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				MasIconos masIconos = new MasIconos();
-				masIconos.txtrA.repaint();
-				masIconos.lanzarVentana();
-				masIconos.setLocationRelativeTo(null);
-				masIconos.setVisible(true);
-			}
-		});
 		verMasIconos.setBounds(225, 183, 136, 23);
 		panel_iconos_1.add(verMasIconos);
 
