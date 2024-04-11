@@ -23,7 +23,8 @@ public class Novedades extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	public Version_App version = new Version_App();
 	//public Novedades_text_v_9_0_0_beta novedades_text_v_9_0_0_beta = new Novedades_text_v_9_0_0_beta();
-	public Novedades_text_v_9_0_2_beta novedades_text_v_9_0_2_beta = new Novedades_text_v_9_0_2_beta();
+	//public Novedades_text_v_9_0_2_beta novedades_text_v_9_0_2_beta = new Novedades_text_v_9_0_2_beta();
+	public Novedades_text_v_9_0_3_beta novedades_text_v_9_0_3_beta = new Novedades_text_v_9_0_3_beta();
 	/**
 	 * Launch the application.
 	 */
@@ -62,7 +63,7 @@ public class Novedades extends JDialog {
 		scrollPane.setToolTipText("");
 		
 		JTextArea txtrA = new JTextArea();
-		txtrA.setText(novedades_text_v_9_0_2_beta.novedades_text_v_9_0_2_beta);
+		txtrA.setText(novedades_text_v_9_0_3_beta.novedades_text_v_9_0_3_beta);
 		txtrA.setWrapStyleWord(true);
 		txtrA.setFont(new Font("SansSerif", Font.PLAIN, 14));
 		txtrA.setMargin(new Insets(15, 15, 15, 15));
